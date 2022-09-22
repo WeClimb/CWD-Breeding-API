@@ -5,7 +5,7 @@ namespace ReviewPlatformAPI.Repos
 {
     public class ChangePasswordRepo : BaseRepo<ChangePassword>
     {
-        public ChangePasswordRepo(ReviewPlatformDBContext reviewPlatformDBContext) : base(reviewPlatformDBContext)
+        public ChangePasswordRepo(CWDBreedingContext reviewPlatformDBContext) : base(reviewPlatformDBContext)
         {
         }
 

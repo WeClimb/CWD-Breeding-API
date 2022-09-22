@@ -1,0 +1,7 @@
+C:\Users\kcowh\Repos\CWD-Breeding\CWD-Breeding-API\WebApplication1\obj\Debug\net6.0\CWDBreedingAPI.csproj.AssemblyReference.cache
+C:\Users\kcowh\Repos\CWD-Breeding\CWD-Breeding-API\WebApplication1\obj\Debug\net6.0\CWDBreedingAPI.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\kcowh\Repos\CWD-Breeding\CWD-Breeding-API\WebApplication1\obj\Debug\net6.0\CWDBreedingAPI.AssemblyInfoInputs.cache
+C:\Users\kcowh\Repos\CWD-Breeding\CWD-Breeding-API\WebApplication1\obj\Debug\net6.0\CWDBreedingAPI.AssemblyInfo.cs
+C:\Users\kcowh\Repos\CWD-Breeding\CWD-Breeding-API\WebApplication1\obj\Debug\net6.0\CWDBreedingAPI.csproj.CoreCompileInputs.cache
+C:\Users\kcowh\Repos\CWD-Breeding\CWD-Breeding-API\WebApplication1\obj\Debug\net6.0\CWDBreedingAPI.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\kcowh\Repos\CWD-Breeding\CWD-Breeding-API\WebApplication1\obj\Debug\net6.0\CWDBreedingAPI.MvcApplicationPartsAssemblyInfo.cache

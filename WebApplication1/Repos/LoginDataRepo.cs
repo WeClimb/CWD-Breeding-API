@@ -5,7 +5,7 @@ namespace ReviewPlatformAPI.Repos
 {
     public class LoginDataRepo : BaseRepo<LoginData>
     {
-        public LoginDataRepo(ReviewPlatformDBContext reviewPlatformDBContext) : base(reviewPlatformDBContext)
+        public LoginDataRepo(CWDBreedingContext reviewPlatformDBContext) : base(reviewPlatformDBContext)
         {
         }
 

@@ -5,9 +5,9 @@ namespace ReviewPlatformAPI.Repos
 {
     public abstract class BaseRepo<Entity> where Entity : BaseEntity
     {
-        protected readonly ReviewPlatformDBContext _reviewPlatformDBContext;
+        protected readonly CWDBreedingContext _reviewPlatformDBContext;
 
-        public BaseRepo(ReviewPlatformDBContext reviewPlatformDBContext)
+        public BaseRepo(CWDBreedingContext reviewPlatformDBContext)
         {
             _reviewPlatformDBContext = reviewPlatformDBContext;
         }

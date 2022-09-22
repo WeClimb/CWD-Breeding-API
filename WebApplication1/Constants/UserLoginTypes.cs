@@ -2,7 +2,8 @@
 {
     public class UserLoginTypes
     {
-        public const string Client = "Client";
-        public const string ServiceProvider = "ServiceProvider";
+        public const string Ranch = "Ranch";
+        public const string User = "User";
+        public const string AdminUser = "Admin";
     }
 }

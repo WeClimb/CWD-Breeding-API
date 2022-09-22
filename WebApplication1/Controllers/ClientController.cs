@@ -4,24 +4,23 @@ using ReviewPlatformAPI.Entities;
 using ReviewPlatformAPI.Models;
 using ReviewPlatformAPI.Models.Non_EntityModels;
 using ReviewPlatformAPI.Services;
-using ReviewPlatformAPI.Utils;
 
 namespace ReviewPlatformAPI.Controllers
 {
     [Authorize]
     [Route("[controller]")]
     [ApiController]
-    public class ClientController : BaseController<ClientModel, Client>
+    public class UserController : BaseController<UserModel, User>
     {
-        private readonly ClientService _clientService;
+        private readonly UserService _userService;
 
-        public ClientController(ClientService clientService)
+        public UserController(UserService userService)
         {
-            _clientService = clientService;
+            _userService = userService;
         }
-        public override BaseService<ClientModel, Client> LoadService()
+        public override BaseService<UserModel, User> LoadService()
         {
-            return _clientService;
+            return _userService;
         }
 
         [AllowAnonymous]
@@ -30,22 +29,23 @@ namespace ReviewPlatformAPI.Controllers
         public IActionResult Login()
         {
             string encodedAuthRequest = Request.Headers["Authorization"];
-            Client client = _clientService.Login(encodedAuthRequest);
+            User user = _userService.Login(encodedAuthRequest);
 
-            if (client == null)
+            if (user == null)
             {
                 return BadRequest(new { message = "Invalid credentials" });
             }
 
-            string tokenString = _clientService.GenerateToken(client);
+            string tokenString = _userService.GenerateToken(user);
 
             // return basic user info and authentication token
             return Ok(new
             {
-                Id = client.Id,
-                Username = client.Email,
-                FirstName = client.FirstName,
-                LastName = client.LastName,
+                Id = user.Id,
+                Username = user.Email,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                LoginType = user.LoginData.LoginType,
                 Token = tokenString,
             });
         }
@@ -63,7 +63,7 @@ namespace ReviewPlatformAPI.Controllers
 
             try
             {
-                _clientService.ChangePassword(new Guid(passwordRequestModel.changePasswordId), passwordRequestModel.password);
+                _userService.ChangePassword(new Guid(passwordRequestModel.changePasswordId), passwordRequestModel.password);
                 return Ok(new { message = "Success!" });
             }
             catch (Exception ex)
@@ -74,7 +74,7 @@ namespace ReviewPlatformAPI.Controllers
 
         [AllowAnonymous]
         [HttpPost]
-        public IActionResult CreateClient(ClientModel model)
+        public IActionResult CreateUser(UserModel model)
         {
             return Create(model);
         }
@@ -86,9 +86,16 @@ namespace ReviewPlatformAPI.Controllers
         }
 
         [HttpPut("{id:Guid}")]
-        public IActionResult UpdateClient(Guid id, ClientModel model)
+        public IActionResult UpdateUser(Guid id, UserModel model)
         {
             return Update(id, model);
         }
+
+        //[HttpGet]
+        //[Route("All")]
+        //public List<UserModel> All(string? firstName, string? lastName, string? city, string? state)
+        //{
+        //    return _userService.GetA(firstName,lastName,city,state);
+        //}
     }
 }

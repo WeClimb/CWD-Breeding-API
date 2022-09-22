@@ -1,35 +1,33 @@
-﻿using Microsoft.IdentityModel.Tokens;
-using ReviewPlatformAPI.Constants;
+﻿using ReviewPlatformAPI.Models;
 using ReviewPlatformAPI.Entities;
-using ReviewPlatformAPI.Models;
 using ReviewPlatformAPI.Repos;
-using ReviewPlatformAPI.Utils;
 using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using System.Text;
-using ServiceProvider = ReviewPlatformAPI.Entities.ServiceProvider;
+using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
+using ReviewPlatformAPI.Utils;
+using ReviewPlatformAPI.Constants;
 
 namespace ReviewPlatformAPI.Services
 {
-    public class ServiceProviderService : BaseService<ServiceProviderModel, ServiceProvider>
+    public class UserService : BaseService<UserModel, User>
     {
-        private readonly ServiceProviderRepo _serviceProviderRepo;
+        private readonly UserRepo _userRepo;
         private readonly LoginDataService _loginDataService;
         private readonly SubDataService _subDataService;
         private readonly IConfiguration _configuration;
         private readonly AuthHelper _authHelper;
         private readonly ChangePasswordService _changePasswordService;
         private readonly EmailService _emailService;
-
-        public ServiceProviderService(ServiceProviderRepo serviceProviderRepo, 
-                                      LoginDataService loginDataService, 
-                                      SubDataService subDataService,
-                                      IConfiguration configuration,
-                                      AuthHelper authHelper,
-                                      ChangePasswordService changerPasswordService,
-                                      EmailService emailService)
+        public UserService(UserRepo userRepo, 
+                            LoginDataService loginDataService, 
+                            SubDataService subDataService, 
+                            IConfiguration configuration, 
+                            AuthHelper authHelper,
+                            ChangePasswordService changerPasswordService,
+                            EmailService emailService)
         {
-            _serviceProviderRepo = serviceProviderRepo;
+            _userRepo = userRepo;
             _loginDataService = loginDataService;
             _subDataService = subDataService;
             _configuration = configuration;
@@ -37,26 +35,24 @@ namespace ReviewPlatformAPI.Services
             _changePasswordService = changerPasswordService;
             _emailService = emailService;
         }
-        //TODO: Figure out a way if there is any fail delete everything that happened!
-        protected override void AdditionalPreAddLogic(ServiceProvider entity)
-        {
-            ServiceProvider? serviceProvider = _serviceProviderRepo.CheckIfEmailExists(entity.Email);
 
-            if (serviceProvider == null)
+        //TODO: Figure out a way if there is any fail delete everything that happened!
+        protected override void AdditionalPreAddLogic(User entity)
+        {
+            User? user = _userRepo.CheckIfEmailExists(entity.Email);
+
+            if(user == null)
             {
                 LoginDataModel loginData = new LoginDataModel();
                 entity.LoginDataId = _loginDataService.Create(loginData);
-
-                SubDataModel subData = new SubDataModel();
-                entity.SubDataId = _subDataService.Create(subData);
-            } 
+            }
             else
             {
-                //TODO: Make this more clear
-                throw new Exception("Failed to add Service Provider");
+                throw new Exception("Failed to add User");
             }
         }
-        protected override void AdditonalPostAddLogic(ServiceProvider entity)
+
+        protected override void AdditonalPostAddLogic(User entity)
         {
             var emailSuccess = ForgotPassword(entity.Email);
             if (!emailSuccess)
@@ -64,24 +60,25 @@ namespace ReviewPlatformAPI.Services
                 throw new Exception("Email failed to send.");
             }
         }
-        public override ServiceProvider ConverToEntityForAdd(ServiceProviderModel model)
+
+        public override User ConverToEntityForAdd(UserModel model)
         {
-            return new ServiceProvider
+            return new User
             {
                 Status = "ACTIVE",
                 Email = model.Email,
                 FirstName = model.FirstName,
+                LastName = model.LastName,
                 City = model.City,
                 State = model.State,
-                LastName = model.LastName,
                 CreateDate = DateTime.Now,
                 UpdateDate = DateTime.Now,
             };
         }
 
-        public override void CopyDataForUpdate(ServiceProvider entity, ServiceProviderModel model)
+        public override void CopyDataForUpdate(User entity, UserModel model)
         {
-            if (model.FirstName != null && model.FirstName.Length != 0)
+            if(model.FirstName != null && model.FirstName.Length != 0)
             {
                 entity.FirstName = model.FirstName;
             }
@@ -93,59 +90,57 @@ namespace ReviewPlatformAPI.Services
             {
                 entity.Email = model.Email;
             }
-            if (model.State != null && model.State.Length != 0)
-            {
-                entity.State = model.State;
-            }
             if (model.City != null && model.City.Length != 0)
             {
                 entity.City = model.City;
+            }
+            if (model.State != null && model.State.Length != 0)
+            {
+                entity.State = model.State;
             }
 
             entity.Status = model.Status ?? entity.Status;
             entity.UpdateDate = DateTime.Now;
         }
 
-        public override ServiceProviderModel CreateModelForIndividualLookup(ServiceProvider entity)
+        public override UserModel CreateModelForIndividualLookup(User entity)
         {
-            return new ServiceProviderModel
+            return new UserModel
             {
-                Id = entity.Id,
+                 Id = entity.Id,
+                 FirstName = entity.FirstName,
+                 LastName = entity.LastName,
+                 Email = entity.Email,
+                 Status = entity.Status,
+                 City = entity.City,
+                 State = entity.State,
+                 LoginDataId = entity.LoginDataId,
+                 CreateDate = entity.CreateDate,
+                 UpdateDate = entity.UpdateDate
+            };
+        }
+
+        public override UserModel CreateModelForListLookup(User entity)
+        {
+            return new UserModel
+            {
+                Status = entity.Status,
+                Email = entity.Email,
+                LoginDataId = entity.LoginDataId,
                 FirstName = entity.FirstName,
                 LastName = entity.LastName,
-                Email = entity.Email,
-                Status = entity.Status,
                 City = entity.City,
                 State = entity.State,
-                LoginDataId = entity.LoginDataId,
-                SubDataId = entity.SubDataId,
                 CreateDate = entity.CreateDate,
                 UpdateDate = entity.UpdateDate
             };
         }
 
-        public override ServiceProviderModel CreateModelForListLookup(ServiceProvider entity)
+        public User GetByIDNoTracking(Guid id)
         {
-            return new ServiceProviderModel
-            {
-                Status = entity.Status,
-                Email = entity.Email,
-                LoginDataId = entity.LoginDataId,
-                FirstName = entity.FirstName,
-                City = entity.City,
-                State = entity.State,
-                LastName = entity.LastName,
-                SubDataId = entity.SubDataId,
-                CreateDate = entity.CreateDate,
-                UpdateDate = entity.UpdateDate
-            };
+            return _userRepo.GetByNoTrackingId(id);
         }
-
-        public ServiceProvider GetByIDNoTracking(Guid id)
-        {
-            return _serviceProviderRepo.GetByNoTrackingId(id);
-        }
-        public ServiceProvider Login(string encodedAuthRequest)
+        public User Login(string encodedAuthRequest)
         {
             string[] parsedAuthRequest = _authHelper.decodeAuth(encodedAuthRequest);
             string username = parsedAuthRequest[0];
@@ -156,22 +151,22 @@ namespace ReviewPlatformAPI.Services
                 throw new Exception("TODO: ERROR");
             }
 
-            ServiceProvider serviceProvider = _serviceProviderRepo.GetAuthClient(username);
+            User user = _userRepo.GetAuthUser(username);
 
-            if (serviceProvider == null)
+            if (user == null)
             {
                 throw new Exception("TODO: ERROR");
             }
 
-            if (!_authHelper.CheckCredentials(username, password, UserLoginTypes.ServiceProvider))
+            if (!_authHelper.CheckCredentials(username, password, UserLoginTypes.User))
             {
                 throw new Exception("TODO: ERROR");
             }
 
-            return serviceProvider;
+            return user;
         }
 
-        public string GenerateToken(ServiceProvider serviceProvider)
+            public string GenerateToken(User user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]);
@@ -179,7 +174,7 @@ namespace ReviewPlatformAPI.Services
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new Claim(ClaimTypes.Name, serviceProvider.Id.ToString()),
+                    new Claim(ClaimTypes.Name, user.Id.ToString()),
                 }),
                 Expires = DateTime.UtcNow.AddDays(1),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key),
@@ -191,24 +186,24 @@ namespace ReviewPlatformAPI.Services
 
         public bool ChangePassword(Guid changePasswordId, string password)
         {
-            ChangePasswordModel changePassword = _serviceProviderRepo.GetChangePasswordRequest(changePasswordId);
-            ServiceProvider serviceProvider = changePassword.ServiceProvider;
+            ChangePassword changePassword = _userRepo.GetChangePasswordRequest(changePasswordId);
+            User user = changePassword.User;
 
             if (changePassword == null || DateTime.Now.CompareTo(changePassword.ExpirationDate) > 0)
             {
                 return false;
             }
 
-            if (serviceProvider == null)
+            if (user == null)
             {
                 return false;
             }
 
             byte[] newSalt = _authHelper.GenerateSalt();
-            serviceProvider.LoginData!.Password = _authHelper.Sha256(password, newSalt);
-            serviceProvider.LoginData!.Salt = Convert.ToBase64String(newSalt);
+            user.LoginData!.Password = _authHelper.Sha256(password, newSalt);
+            user.LoginData!.Salt = Convert.ToBase64String(newSalt);
 
-            _serviceProviderRepo.SaveChanges();
+            _userRepo.SaveChanges();
 
             return true;
         }
@@ -216,15 +211,15 @@ namespace ReviewPlatformAPI.Services
         //TODO: Once we get front end set up and figure out urls finish setting this up
         public bool ForgotPassword(string email)
         {
-            ServiceProvider serviceProvider = _serviceProviderRepo.GetServiceProviderByEmail(email);
+            User user = _userRepo.GetUserByEmail(email);
 
-            if (serviceProvider == null)
+            if (user == null)
             {
                 return false;
             }
 
             ChangePasswordModel changePasswordModel = new ChangePasswordModel();
-            changePasswordModel.ServiceProviderId = serviceProvider.Id;
+            changePasswordModel.UserId = user.Id;
 
             string changePasswordId = _changePasswordService.Create(changePasswordModel).ToString();
 
@@ -234,13 +229,14 @@ namespace ReviewPlatformAPI.Services
             }
 
             //string currentHost = _healthPossibleDbContext.Settings.FirstOrDefault(x => x.SettingKey == "CUSTOMER_URL").SettingValue;
-            string currentHost = "https://localhost:4200";
+            string currentHost = "https://localhost:7145";
             string Url = "";
 
             if (currentHost.Contains("localhost"))
             {
                 Url = $"http://{currentHost}/{string.Concat("change-password/", changePasswordId.ToString())}";
             }
+            //TODO: SET UP FOR CLOUD DB
             //else
             //{
             //    UriBuilder changePasswordUriBuilder = new UriBuilder()
@@ -254,10 +250,11 @@ namespace ReviewPlatformAPI.Services
             //    Url = changePasswordUriBuilder.ToString();
             //}
 
+
             bool emailStatus = _emailService.SendEmail(
-                serviceProvider.Email,
+                user.Email,
                 EmailConstants.ChangePasswordSubject,
-                string.Format(EmailConstants.ChangePasswordBody, serviceProvider.FirstName, Url),
+                string.Format(EmailConstants.ChangePasswordBody, user.FirstName, Url),
                 null
             );
 
@@ -265,9 +262,9 @@ namespace ReviewPlatformAPI.Services
         }
 
 
-        public override BaseRepo<ServiceProvider> LoadRepo()
+        public override BaseRepo<User> LoadRepo()
         {
-            return _serviceProviderRepo;
+            return _userRepo;
         }
     }
 }

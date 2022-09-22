@@ -10,8 +10,8 @@ namespace ReviewPlatformAPI.Utils
 {
     public class AuthHelper
     {
-        private readonly ReviewPlatformDBContext _reviewPlatformDbContext;
-        public AuthHelper(ReviewPlatformDBContext reviewPlatformDbContext)
+        private readonly CWDBreedingContext _reviewPlatformDbContext;
+        public AuthHelper(CWDBreedingContext reviewPlatformDbContext)
         {
             _reviewPlatformDbContext = reviewPlatformDbContext;
         }

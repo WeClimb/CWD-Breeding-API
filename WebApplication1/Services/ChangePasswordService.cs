@@ -17,8 +17,8 @@ namespace ReviewPlatformAPI.Services
             return new ChangePassword
             {
                 Id = Guid.NewGuid(),
-                ClientId = model.ClientId,
-                ServiceProviderId = model.ServiceProviderId,
+                RanchId = model.RanchId,
+                UserId = model.UserId,
                 ExpirationDate = DateTime.UtcNow.AddDays(1),
                 Status = "ACTIVE",
                 CreateDate = DateTime.Now,
@@ -37,8 +37,8 @@ namespace ReviewPlatformAPI.Services
             return new ChangePasswordModel
             {
                 Id = entity.Id,
-                ClientId = entity.ClientId,
-                ServiceProviderId = entity.ServiceProviderId,
+                RanchId = entity.RanchId,
+                UserId = entity.UserId,
                 ExpirationDate = entity.ExpirationDate,
                 Status = entity.Status,
                 CreateDate = entity.CreateDate,
@@ -51,8 +51,8 @@ namespace ReviewPlatformAPI.Services
             return new ChangePasswordModel
             {
                 Id = entity.Id,
-                ClientId = entity.ClientId,
-                ServiceProviderId = entity.ServiceProviderId,
+                UserId = entity.UserId,
+                RanchId = entity.RanchId,
                 ExpirationDate = entity.ExpirationDate,
                 Status = entity.Status,
                 CreateDate = entity.CreateDate,

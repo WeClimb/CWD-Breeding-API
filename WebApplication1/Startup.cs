@@ -27,7 +27,7 @@ namespace ReviewPlatformAPI
 
             services.AddControllers().AddJsonOptions(_ => _.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles);
 
-            services.AddDbContext<ReviewPlatformDBContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddDbContext<CWDBreedingContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddControllers();
             services.AddDistributedMemoryCache();
