@@ -15,7 +15,7 @@ namespace ReviewPlatformAPI.Entities
         public string? City { get; set; }
         public string? State { get; set; }
         public Guid LoginDataId { get; set; }
-        public virtual LoginDatum LoginData { get; set; } = null!;
+        public virtual LoginData LoginData { get; set; } = null!;
         public virtual ICollection<ChangePassword> ChangePasswords { get; set; }
     }
 }

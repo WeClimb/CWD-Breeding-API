@@ -44,32 +44,11 @@ namespace ReviewPlatformAPI
             //var key = Encoding.ASCII.GetBytes(Configuration.GetValue<string>("Secret"));
             var key = Encoding.ASCII.GetBytes(Configuration["Jwt:Key"]);
 
-            services.AddScoped<ClientService, ClientService>();
-            services.AddScoped<ClientRepo, ClientRepo>();
-
             services.AddScoped<LoginDataService, LoginDataService>();
             services.AddScoped<LoginDataRepo, LoginDataRepo>();
 
-            services.AddScoped<SubDataService, SubDataService>();
-            services.AddScoped<SubDataRepo, SubDataRepo>();
-
-            services.AddScoped<ServiceProviderService, ServiceProviderService>();
-            services.AddScoped<ServiceProviderRepo, ServiceProviderRepo>();
-
-            services.AddScoped<ServiceProviderReviewService, ServiceProviderReviewService>();
-            services.AddScoped<ServiceProviderReviewRepo, ServiceProviderReviewRepo>();
-
-            services.AddScoped<ReviewService, ReviewService>();
-            services.AddScoped<ReviewRepo, ReviewRepo>();
-
-            services.AddScoped<ClientReviewService, ClientReviewService>();
-            services.AddScoped<ClientReviewRepo, ClientReviewRepo>();
-
-            services.AddScoped<ChangeRequestService, ChangeRequestService>();
-            services.AddScoped<ChangeRequestRepo, ChangeRequestRepo>();
-
-            services.AddScoped<ReviewChangeRequestService, ReviewChangeRequestService>();
-            services.AddScoped<ReviewChangeRequestRepo, ReviewChangeRequestRepo>();
+            services.AddScoped<UserService, UserService>();
+            services.AddScoped<UserRepo, UserRepo>();
 
             services.AddScoped<ChangePasswordRepo, ChangePasswordRepo>();
             services.AddScoped<ChangePasswordService, ChangePasswordService>();
@@ -93,21 +72,21 @@ namespace ReviewPlatformAPI
                {
                    OnTokenValidated = context =>
                    {
-                       var clientService = context.HttpContext.RequestServices.GetRequiredService<ClientService>();
-                       var clientId = Guid.Parse(context.Principal!.Identity!.Name!);
-                       var client = clientService.GetByIDNoTracking(clientId);
+                       var userService = context.HttpContext.RequestServices.GetRequiredService<UserService>();
+                       var userId = Guid.Parse(context.Principal!.Identity!.Name!);
+                       var user = userService.GetByIDNoTracking(userId);
 
-                       var serviceProviderService = context.HttpContext.RequestServices.GetRequiredService<ServiceProviderService>();
-                       var serviceProviderId = Guid.Parse(context.Principal!.Identity!.Name!);
-                       var serviceProvider = serviceProviderService.GetByIDNoTracking(serviceProviderId);
+                       var ranchService = context.HttpContext.RequestServices.GetRequiredService<RanchService>();
+                       var ranchId = Guid.Parse(context.Principal!.Identity!.Name!);
+                       var ranch = ranchService.GetByIDNoTracking(ranchId);
 
-                       if (client == null && serviceProvider == null)
+                       if (user == null && ranch == null)
                        {
                            context.Fail("Unauthorized");
                        }
 
-                       client = null;
-                       serviceProvider = null;
+                       user = null;
+                       ranch = null;
 
                        return Task.CompletedTask;
                    }

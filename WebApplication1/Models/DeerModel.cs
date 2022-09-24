@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ReviewPlatformAPI.Entities;
+using System;
 using System.Collections.Generic;
 
 namespace ReviewPlatformAPI.Models
@@ -10,7 +11,7 @@ namespace ReviewPlatformAPI.Models
             LevelOneRelationships = new HashSet<LevelOneRelationshipModel>();
             LevelThreeRelationships = new HashSet<LevelThreeRelationshipModel>();
             LevelTwoRelationships = new HashSet<LevelTwoRelationshipModel>();
-            Media = new HashSet<Medium>();
+            Media = new HashSet<MediaModel>();
         }
 
         public string Name { get; set; } = null!;

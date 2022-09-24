@@ -14,14 +14,12 @@ namespace ReviewPlatformAPI.Services
     {
         private readonly RanchRepo _ranchRepo;
         private readonly LoginDataService _loginDataService;
-        private readonly SubDataService _subDataService;
         private readonly IConfiguration _configuration;
         private readonly AuthHelper _authHelper;
         private readonly ChangePasswordService _changePasswordService;
         private readonly EmailService _emailService;
         public RanchService(RanchRepo RanchRepo,
                             LoginDataService loginDataService,
-                            SubDataService subDataService,
                             IConfiguration configuration,
                             AuthHelper authHelper,
                             ChangePasswordService changerPasswordService,
@@ -29,7 +27,6 @@ namespace ReviewPlatformAPI.Services
         {
             _ranchRepo = RanchRepo;
             _loginDataService = loginDataService;
-            _subDataService = subDataService;
             _configuration = configuration;
             _authHelper = authHelper;
             _changePasswordService = changerPasswordService;

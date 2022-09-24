@@ -45,7 +45,7 @@ namespace ReviewPlatformAPI.Controllers
                 Username = user.Email,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
-                LoginType = user.LoginData.LoginType,
+                LoginType = Constants.UserLoginTypes.AdminUser,
                 Token = tokenString,
             });
         }

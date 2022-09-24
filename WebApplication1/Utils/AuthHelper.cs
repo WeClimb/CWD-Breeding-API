@@ -2,7 +2,6 @@
 using ReviewPlatformAPI.Entities;
 using System.Security.Cryptography;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
-using ServiceProvider = ReviewPlatformAPI.Entities.ServiceProvider;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,18 +18,18 @@ namespace ReviewPlatformAPI.Utils
         public bool CheckCredentials(string username, string password, string userLoginType)
         {
             // Refactored to check which type of login needs to happen
-            if (userLoginType == UserLoginTypes.Client)
+            if (userLoginType == UserLoginTypes.User)
             {
-                Client client = _reviewPlatformDbContext.Clients.Include(client => client.LoginData).FirstOrDefault(client => client.Email == username);
-                if (client != null && Sha256(password, Convert.FromBase64String(client.LoginData!.Salt)) == client.LoginData.Password)
+                User user = _reviewPlatformDbContext.Users.Include(user => user.LoginData).FirstOrDefault(client => client.Email == username);
+                if (user != null && Sha256(password, Convert.FromBase64String(user.LoginData!.Salt)) == user.LoginData.Password)
                 {
                     return true;
                 }
             }
-            else if (userLoginType == UserLoginTypes.ServiceProvider)
+            else if (userLoginType == UserLoginTypes.Ranch)
             {
-                ServiceProvider serviceProvider = _reviewPlatformDbContext.ServiceProviders.Include(serviceProvider => serviceProvider.LoginData).FirstOrDefault(x => x.Email == username);
-                if (serviceProvider != null && Sha256(password, Convert.FromBase64String(serviceProvider.LoginData!.Salt)) == serviceProvider.LoginData.Password)
+                Ranch ranch = _reviewPlatformDbContext.Ranches.Include(ranch => ranch.LoginData).FirstOrDefault(x => x.Email == username);
+                if (ranch != null && Sha256(password, Convert.FromBase64String(ranch.LoginData!.Salt)) == ranch.LoginData.Password)
                 {
                     return true;
                 }
