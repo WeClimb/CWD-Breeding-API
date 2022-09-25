@@ -4,12 +4,12 @@
     //TODO: Get rid of all non used emails and set up for PreKno
     public class EmailConstants
     {
-        public static string ReplyToEmail = "onTheUpper@outlook.com";
+        public static string ReplyToEmail = "cwdbreeding@outlook.com";
 
         public static List<string> EmployeeCC = new List<string>() {};
 
         // subjects
-        public static string ChangePasswordSubject = "Upper Account - Set-up/Change Password";
+        public static string ChangePasswordSubject = "CWD Breeding Account - Set-up/Change Password";
 
         public static string ApplicationSubmittedSubject = "Application Ready for Review";
 
@@ -55,7 +55,7 @@
 
 
         public static string ChangePasswordBody = "{0},<br><br>A request has been sent to set-up/change your password for your " +
-                                                    "Upper Account,   " +
+                                                    "CWD Breeding Ranch Account,   " +
                                                     "if this was you click <a href='{1}'>here</a> " +
                                                     "to reset your password.<br><br>If this was not you, please ignore this email.";
 

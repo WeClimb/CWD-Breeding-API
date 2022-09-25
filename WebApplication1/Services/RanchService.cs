@@ -62,6 +62,12 @@ namespace ReviewPlatformAPI.Services
         {
             return new Ranch
             {
+                Id = Guid.NewGuid(),
+                Name = model.Name,
+                Website = model.Website,
+                Address = model.Address,
+                Zipcode = model.Zipcode,
+                PhoneNumber = model.PhoneNumber,
                 Status = "ACTIVE",
                 Email = model.Email,
                 OwnerFirstName = model.OwnerFirstName,
@@ -75,6 +81,22 @@ namespace ReviewPlatformAPI.Services
 
         public override void CopyDataForUpdate(Ranch entity, RanchModel model)
         {
+            if (model.Website != null && model.Website.Length != 0)
+            {
+                entity.Website = model.Website;
+            }
+            if (model.Address != null && model.Address.Length != 0)
+            {
+                entity.Address = model.Address;
+            }
+            if (model.Zipcode != null && model.Zipcode.Length != 0)
+            {
+                entity.Zipcode = model.Zipcode;
+            }
+            if (model.PhoneNumber != null && model.PhoneNumber.Length != 0)
+            {
+                entity.PhoneNumber = model.PhoneNumber;
+            }
             if (model.OwnerFirstName != null && model.OwnerFirstName.Length != 0)
             {
                 entity.OwnerFirstName = model.OwnerFirstName;
@@ -107,6 +129,11 @@ namespace ReviewPlatformAPI.Services
                 Id = entity.Id,
                 OwnerFirstName = entity.OwnerFirstName,
                 OwnerlastName = entity.OwnerlastName,
+                PhoneNumber = entity.PhoneNumber,
+                Website = entity.Website,
+                Address = entity.Address,
+                Zipcode = entity.Zipcode,
+                Name = entity.Name,
                 Email = entity.Email,
                 Status = entity.Status,
                 City = entity.City,
@@ -121,13 +148,19 @@ namespace ReviewPlatformAPI.Services
         {
             return new RanchModel
             {
-                Status = entity.Status,
-                Email = entity.Email,
-                LoginDataId = entity.LoginDataId,
+                Id = entity.Id,
                 OwnerFirstName = entity.OwnerFirstName,
                 OwnerlastName = entity.OwnerlastName,
+                PhoneNumber = entity.PhoneNumber,
+                Website = entity.Website,
+                Address = entity.Address,
+                Zipcode = entity.Zipcode,
+                Name = entity.Name,
+                Email = entity.Email,
+                Status = entity.Status,
                 City = entity.City,
                 State = entity.State,
+                LoginDataId = entity.LoginDataId,
                 CreateDate = entity.CreateDate,
                 UpdateDate = entity.UpdateDate
             };
@@ -145,19 +178,19 @@ namespace ReviewPlatformAPI.Services
 
             if (string.IsNullOrEmpty(ranchname) || string.IsNullOrEmpty(password))
             {
-                throw new Exception("TODO: ERROR");
+                throw new Exception("Authentication Failed");
             }
 
             Ranch ranch = _ranchRepo.GetAuthRanch(ranchname);
 
             if (ranch == null)
             {
-                throw new Exception("TODO: ERROR");
+                throw new Exception("Authentication Failed");
             }
 
             if (!_authHelper.CheckCredentials(ranchname, password, UserLoginTypes.Ranch))
             {
-                throw new Exception("TODO: ERROR");
+                throw new Exception("Authentication Failed");
             }
 
             return ranch;
@@ -173,7 +206,7 @@ namespace ReviewPlatformAPI.Services
                 {
                     new Claim(ClaimTypes.Name, ranch.Id.ToString()),
                 }),
-                Expires = DateTime.UtcNow.AddDays(1),
+                Expires = DateTime.UtcNow.AddMinutes(60),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key),
                     SecurityAlgorithms.HmacSha256Signature)
             };
@@ -226,7 +259,7 @@ namespace ReviewPlatformAPI.Services
             }
 
             //string currentHost = _healthPossibleDbContext.Settings.FirstOrDefault(x => x.SettingKey == "CUSTOMER_URL").SettingValue;
-            string currentHost = "https://localhost:7145";
+            string currentHost = "localhost:4200";
             string Url = "";
 
             if (currentHost.Contains("localhost"))

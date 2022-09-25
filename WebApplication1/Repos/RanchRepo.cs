@@ -31,7 +31,7 @@ namespace ReviewPlatformAPI.Repos
 
         public Ranch GetAuthRanch(string userName)
         {
-            return _reviewPlatformDBContext.Ranches.SingleOrDefault(x => x.Email == userName) ?? throw new Exception("TODO: ERROR");
+            return _reviewPlatformDBContext.Ranches.SingleOrDefault(x => x.Email == userName) ?? throw new Exception("Authentication Failed");
         }
 
         public ChangePassword GetChangePasswordRequest(Guid id)

@@ -34,7 +34,6 @@ namespace ReviewPlatformAPI
 
             services.AddOptions();
 
-            services.AddMvc().AddJsonOptions(options => options.JsonSerializerOptions.IgnoreNullValues = true);
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
@@ -49,6 +48,9 @@ namespace ReviewPlatformAPI
 
             services.AddScoped<UserService, UserService>();
             services.AddScoped<UserRepo, UserRepo>();
+
+            services.AddScoped<RanchService, RanchService>();
+            services.AddScoped<RanchRepo, RanchRepo>();
 
             services.AddScoped<ChangePasswordRepo, ChangePasswordRepo>();
             services.AddScoped<ChangePasswordService, ChangePasswordService>();
