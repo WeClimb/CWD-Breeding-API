@@ -15,7 +15,7 @@ namespace ReviewPlatformAPI.Entities
 
         public string Name { get; set; } = null!;
         public string Nadr { get; set; } = null!;
-        public decimal? Dob { get; set; }
+        public DateTime Dob { get; set; }
         public decimal? Age { get; set; }
         public decimal Gebu { get; set; }
         public decimal Codon { get; set; }

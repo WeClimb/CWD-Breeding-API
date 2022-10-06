@@ -54,7 +54,7 @@ namespace ReviewPlatformAPI
                 entity.Property(e => e.Codon).HasColumnType("decimal(18, 0)");
 
                 entity.Property(e => e.Dob)
-                    .HasColumnType("decimal(18, 0)")
+                    .HasColumnType("datetime")
                     .HasColumnName("DOB");
 
                 entity.Property(e => e.Gebu)

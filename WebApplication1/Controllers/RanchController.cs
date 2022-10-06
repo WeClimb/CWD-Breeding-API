@@ -52,7 +52,7 @@ namespace ReviewPlatformAPI.Controllers
                     Token = tokenString,
                 });
             } 
-            catch
+            catch(Exception x)
             {
                 return BadRequest(new { message = "Authentication Failed" });
             }

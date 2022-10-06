@@ -55,6 +55,9 @@ namespace ReviewPlatformAPI
             services.AddScoped<ChangePasswordRepo, ChangePasswordRepo>();
             services.AddScoped<ChangePasswordService, ChangePasswordService>();
 
+            services.AddScoped<DeerRepo, DeerRepo>();
+            services.AddScoped<DeerService, DeerService>();
+
             services.AddScoped<EmailService, EmailService>();
 
             services.AddScoped<AuthHelper, AuthHelper>();

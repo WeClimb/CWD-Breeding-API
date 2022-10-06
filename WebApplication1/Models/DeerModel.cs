@@ -1,4 +1,5 @@
-﻿using ReviewPlatformAPI.Entities;
+﻿using CWDBreedingAPI.Models.Non_EntityModels;
+using ReviewPlatformAPI.Entities;
 using System;
 using System.Collections.Generic;
 
@@ -16,7 +17,7 @@ namespace ReviewPlatformAPI.Models
 
         public string Name { get; set; } = null!;
         public string Nadr { get; set; } = null!;
-        public decimal? Dob { get; set; }
+        public DateTime Dob { get; set; }
         public decimal? Age { get; set; }
         public decimal Gebu { get; set; }
         public decimal Codon { get; set; }
@@ -25,7 +26,8 @@ namespace ReviewPlatformAPI.Models
         public bool SemenAvailable { get; set; }
         public string? SemenCost { get; set; }
         public Guid RanchId { get; set; }
-        public virtual RanchModel Ranch { get; set; } = null!;
+        public virtual DeerFamilyModel deerFamily { get; set;}
+        public virtual RanchModel? Ranch { get; set; } = null!;
         public virtual ICollection<LevelOneRelationshipModel> LevelOneRelationships { get; set; }
         public virtual ICollection<LevelThreeRelationshipModel> LevelThreeRelationships { get; set; }
         public virtual ICollection<LevelTwoRelationshipModel> LevelTwoRelationships { get; set; }
