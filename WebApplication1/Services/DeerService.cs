@@ -52,10 +52,20 @@ namespace ReviewPlatformAPI.Services
         }
         public override void CopyDataForUpdate(Deer entity, DeerModel model)
         {
-            entity.Status = model.Status;
+            entity.Status = model.Status ?? "ACTIVE";
             entity.CreateDate = model.CreateDate;
-            entity.UpdateDate = model.UpdateDate;
-            entity.Id = model.Id;
+            entity.UpdateDate = DateTime.Now;
+            entity.Age = CalculateAgeFromDOB(model.Dob);
+            entity.SemenCost = model.SemenCost;
+            entity.IsApproved = model.IsApproved;
+            entity.SemenAvailable = model.SemenAvailable;
+            entity.RanchId = model.RanchId;
+            entity.Nadr = model.Nadr;
+            entity.Codon = model.Codon;
+            entity.Name = model.Name;
+            entity.Dob = model.Dob;
+            entity.SciScore = model.SciScore;
+            entity.Gebu = model.Gebu;
         }
 
         public override DeerModel CreateModelForIndividualLookup(Deer entity)

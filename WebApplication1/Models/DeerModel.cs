@@ -26,7 +26,7 @@ namespace ReviewPlatformAPI.Models
         public bool SemenAvailable { get; set; }
         public string? SemenCost { get; set; }
         public Guid RanchId { get; set; }
-        public virtual DeerFamilyModel deerFamily { get; set;}
+        public virtual DeerFamilyModel? deerFamily { get; set;}
         public virtual RanchModel? Ranch { get; set; } = null!;
         public virtual ICollection<LevelOneRelationshipModel> LevelOneRelationships { get; set; }
         public virtual ICollection<LevelThreeRelationshipModel> LevelThreeRelationships { get; set; }

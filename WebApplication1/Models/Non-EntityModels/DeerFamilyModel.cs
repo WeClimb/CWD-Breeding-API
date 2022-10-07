@@ -2,7 +2,7 @@
 {
     public class DeerFamilyModel
     {
-        public string Deer { get; set; } = null!;
+        public string? Deer { get; set; } = null!;
         public string LevelOneSire { get; set; } = "Unknown";
         public string LevelOneDam { get; set; } = "Unknown";
         public string LevelTwoSireA { get; set; } = "Unknown";
