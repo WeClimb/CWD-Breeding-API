@@ -36,6 +36,20 @@ namespace ReviewPlatformAPI.Services
             };
         }
 
+        public DeerModel? GetById(Guid id)
+        {
+            Deer? deer = _deerRepo.GetById(id);
+            if (deer != null)
+            {
+                DeerModel newModel = CreateModelForIndividualLookup(deer);
+                newModel.deerFamily = MapDeerFamily(deer);
+                return newModel;
+            } 
+            else
+            {
+                return null;
+            }
+        }
         public override void CopyDataForUpdate(Deer entity, DeerModel model)
         {
             entity.Status = model.Status;

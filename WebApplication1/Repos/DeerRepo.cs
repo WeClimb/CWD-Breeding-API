@@ -69,6 +69,16 @@ namespace ReviewPlatformAPI.Repos
        
         }
 
+        public Deer? GetById(Guid id)
+        {
+            return LoadDbSet().Where(deer => deer.Id == id)
+                              .Include(deer => deer.Ranch)
+                              .Include(deer => deer.LevelOneRelationships)
+                              .Include(deer => deer.LevelTwoRelationships)
+                              .Include(deer => deer.LevelThreeRelationships)
+                              .FirstOrDefault();
+        }
+
         public List<Deer> GetAll(bool isPending)
         {
             return LoadDbSet().Where(deer => deer.IsApproved == isPending)

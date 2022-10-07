@@ -47,7 +47,15 @@ namespace ReviewPlatformAPI.Controllers
         [HttpGet("{id:Guid}")]
         public IActionResult GetById(Guid id)
         {
-            return LoadById(id);
+            DeerModel? model = _deerService.GetById(id);
+            if(model != null)
+            {
+                return Ok(model);
+            } 
+            else
+            {
+                return BadRequest("Request Failed");
+            }
         }
 
         [HttpPut("{id:Guid}")]
