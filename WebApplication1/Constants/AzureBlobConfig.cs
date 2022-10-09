@@ -15,7 +15,8 @@ namespace CWDBreedingAPI.Constants
         public enum FileCategories
         {
             profile,
-            servicedocuments
+            image,
+            video
         }
 
         public AzureBlobConfig(IConfiguration configuration, string userType, string fileCategory, string fileName, string fileExtension)

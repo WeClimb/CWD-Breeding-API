@@ -7,6 +7,7 @@ using ReviewPlatformAPI.Repos;
 using ReviewPlatformAPI.Utils;
 using Microsoft.IdentityModel.Logging;
 using Serilog;
+using CWDBreedingAPI.Utils;
 
 namespace ReviewPlatformAPI
 {
@@ -61,6 +62,8 @@ namespace ReviewPlatformAPI
             services.AddScoped<EmailService, EmailService>();
 
             services.AddScoped<AuthHelper, AuthHelper>();
+
+            services.AddScoped<AzureStorageHelper, AzureStorageHelper>();
 
             services.AddHealthChecks();
 

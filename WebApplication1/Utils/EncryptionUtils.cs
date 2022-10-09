@@ -1,4 +1,4 @@
-﻿namespace ReviewPlatformAPI.Utils
+﻿namespace CWDBreedingAPI.Utils
 {
     public class EncryptionUtils
     {

@@ -35,7 +35,7 @@ namespace ReviewPlatformAPI.Controllers
         {
             try
             {
-                _deerService.CreateDeerRequest(model);
+                string id = _deerService.CreateDeerRequest(model);
                 return Ok();
             }
             catch(Exception ex)
@@ -70,6 +70,33 @@ namespace ReviewPlatformAPI.Controllers
         public List<DeerModel> All(bool isApproved = false)
         {
             return _deerService.GetAll(isApproved);
+        }
+
+        [AllowAnonymous]
+        [HttpGet("{id:guid}/ProfileImage")]
+        public IActionResult GetProfileImage(Guid id)
+        {
+            return Ok(new { data = _deerService.GetProfileImageBytes(id) });
+        }
+
+        [HttpPost("{id:guid}/ProfileImage")]
+        public IActionResult SaveProfileImage(Guid id, [FromForm] IFormFile profileImg)
+        {
+            try
+            {
+                if (_deerService.SaveProfileImage(id, profileImg))
+                {
+                    return Ok();
+                }
+                else
+                {
+                    return BadRequest("Image did not save");
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

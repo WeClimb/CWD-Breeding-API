@@ -1,7 +1,10 @@
-﻿using CWDBreedingAPI.Models.Non_EntityModels;
+﻿using CWDBreedingAPI.Constants;
+using CWDBreedingAPI.Models.Non_EntityModels;
+using CWDBreedingAPI.Utils;
 using ReviewPlatformAPI.Entities;
 using ReviewPlatformAPI.Models;
 using ReviewPlatformAPI.Repos;
+using static CWDBreedingAPI.Constants.AzureBlobConfig;
 
 namespace ReviewPlatformAPI.Services
 {
@@ -9,11 +12,15 @@ namespace ReviewPlatformAPI.Services
     {
         private readonly DeerRepo _deerRepo;
         private readonly RanchService _ranchService;
+        private readonly AzureStorageHelper _storageHelper;
+        private readonly IConfiguration _configuration;
 
-        public DeerService(DeerRepo deerRepo, RanchService ranchService)
+        public DeerService(DeerRepo deerRepo, RanchService ranchService, AzureStorageHelper storageHelper, IConfiguration configuration)
         {
             _deerRepo = deerRepo;
             _ranchService = ranchService;
+            _storageHelper = storageHelper;
+            _configuration = configuration;
         }
         public override Deer ConverToEntityForAdd(DeerModel model)
         {
@@ -142,13 +149,14 @@ namespace ReviewPlatformAPI.Services
             return modelList;
         }
 
-        public void CreateDeerRequest(DeerModel model)
+        public string CreateDeerRequest(DeerModel model)
         {
             Deer deer = ConverToEntityForAdd(model);
             deer.Id = Guid.NewGuid();
             model.Id = deer.Id;
             _deerRepo.Create(deer);
             _deerRepo.CreateDeerPedigree(model.Id,model.deerFamily);
+            return deer.Id.ToString();
         }
 
         public DeerFamilyModel MapDeerFamily(Deer deer)
@@ -173,6 +181,86 @@ namespace ReviewPlatformAPI.Services
             family.LevelThreeSireD = deer.LevelThreeRelationships.OfType<LevelThreeRelationship>().FirstOrDefault().SireD ?? "unkown";
 
             return family;
+        }
+
+        public ProviderProfileImageModel GetProfileImageBytes(Guid deerId)
+        {
+            ProviderProfileImageModel model = new ProviderProfileImageModel();
+            string profileImageUrl;
+            DeerModel deer = GetById(deerId);
+
+            if (deer != null)
+            {
+                if (String.IsNullOrEmpty(deer.ProfileImage))
+                {
+                    profileImageUrl = "unknown";
+                }
+                else
+                {
+                    profileImageUrl = deer.ProfileImage;
+                }
+
+                byte[] fileData = _storageHelper.DownloadFile(profileImageUrl);
+
+                model.ContentType = FileUtil.GetContentType(fileData);
+                model.ImageData = _storageHelper.ConvertToBase64Format(Convert.ToBase64String(fileData), model.ContentType);
+
+                return model;
+            }
+            else
+            {
+                throw new Exception("Deer does not exist");
+            }
+        }
+
+        public bool SaveProfileImage(Guid deerId, IFormFile profileImg)
+        {
+            DeerModel deer = GetById(deerId);
+
+            if (deer == null)
+            {
+                throw new Exception("Not a valid Deer");
+            }
+
+            // Create Stream
+            Stream dataStream = profileImg.OpenReadStream();
+
+            // Create the config for accessing the blob storage
+            AzureBlobConfig azureConfig = new AzureBlobConfig(_configuration, "Ranch", FileCategories.profile.ToString(), deer.Id.ToString(), FileUtil.GetFileType(dataStream));
+
+            // Image must be a PNG or JPG
+            if (azureConfig.FileExtension.ToLower().Equals(FileTypeChecker.Types.PortableNetworkGraphic.TypeExtension.ToLower()) || azureConfig.FileExtension.ToLower().Equals(FileTypeChecker.Types.JointPhotographicExpertsGroup.TypeExtension.ToLower()))
+            {
+                // Check if there is already a profile image related to this user, if so delete on Azure
+                if (_storageHelper.DoesStorageFileExist(azureConfig))
+                {
+                    _storageHelper.RemoveFileFromStorage(azureConfig);
+                }
+
+                // Verify file size
+                if (!FileUtil.IsFileCorrectSize(profileImg))
+                {
+                    throw new Exception($"File size too large, must be {FileUtil._fileSizeBytes / 1000} or smaller");
+                }
+
+                // Upload file
+                if (_storageHelper.UploadFileToStorage(dataStream, azureConfig))
+                {
+                    deer.ProfileImage = azureConfig.BlobUri.ToString();
+
+                    Update(deer.Id, deer);
+
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                throw new Exception($"File type of {azureConfig.FileExtension} is not a valid file type");
+            }
         }
 
         public override BaseRepo<Deer> LoadRepo()

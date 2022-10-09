@@ -5,7 +5,7 @@ using System.IO;
 using System.Net;
 using CWDBreedingAPI.Constants;
 
-namespace Upper_Backend.Utils
+namespace CWDBreedingAPI.Utils
 {
     public class AzureStorageHelper
     {
