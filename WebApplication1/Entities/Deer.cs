@@ -18,13 +18,13 @@ namespace ReviewPlatformAPI.Entities
         public DateTime Dob { get; set; }
         public decimal? Age { get; set; }
         public decimal Gebu { get; set; }
-        public decimal Codon { get; set; }
+        public string Codon { get; set; }
         public decimal? SciScore { get; set; }
         public bool IsApproved { get; set; }
         public bool SemenAvailable { get; set; }
         public string? SemenCost { get; set; }
         public Guid RanchId { get; set; }
-        public string ProfileImage { get; set; }
+        public string? ProfileImage { get; set; }
         public virtual Ranch Ranch { get; set; } = null!;
         public virtual ICollection<LevelOneRelationship> LevelOneRelationships { get; set; }
         public virtual ICollection<LevelThreeRelationship> LevelThreeRelationships { get; set; }

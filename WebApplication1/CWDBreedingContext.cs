@@ -51,7 +51,10 @@ namespace ReviewPlatformAPI
 
                 entity.Property(e => e.Age).HasColumnType("decimal(18, 0)");
 
-                entity.Property(e => e.Codon).HasColumnType("decimal(18, 0)");
+                entity.Property(e => e.Codon)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("Codon");
 
                 entity.Property(e => e.Dob)
                     .HasColumnType("datetime")

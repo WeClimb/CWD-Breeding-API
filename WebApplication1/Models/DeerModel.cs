@@ -20,7 +20,7 @@ namespace ReviewPlatformAPI.Models
         public DateTime Dob { get; set; }
         public decimal? Age { get; set; }
         public decimal Gebu { get; set; }
-        public decimal Codon { get; set; }
+        public string Codon { get; set; }
         public decimal? SciScore { get; set; }
         public bool IsApproved { get; set; }
         public bool SemenAvailable { get; set; }

@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using ReviewPlatformAPI.Entities;
 using ReviewPlatformAPI.Models.Non_EntityModels;
+using System.Linq.Dynamic.Core;
 
 namespace ReviewPlatformAPI.Repos
 {
@@ -64,9 +65,37 @@ namespace ReviewPlatformAPI.Repos
             }
             catch
             {
-                throw new Exception("Family Createion Failed");
+                throw new Exception("Family Creation Failed");
             }
        
+        }
+
+        public List<Deer> GetAllFiltered(bool isApproved,string? deerName, string? ranchName, string? codon, decimal? gebv,int? age,int? sciScore)
+        {
+            IQueryable<Deer> query = LoadDbSet().Where(deer => deer.IsApproved == isApproved)
+                                          .Where(deer => deer.Name.Contains(deerName))
+                                          .Where(deer => deer.Ranch.Name.Contains(ranchName))
+                                          .Where(deer => deer.Codon.Contains(codon));
+
+            if (gebv != null) {
+                query = query.Where(deer => deer.Gebu <= gebv);
+            }
+
+            if(age != null)
+            {
+                query = query.Where(deer => deer.Age.ToString().Contains(age.ToString()));
+            }
+
+            if(sciScore != null)
+            {
+                query = query.Where(deer => deer.SciScore >= sciScore);
+            }
+
+            return query.Include(deer => deer.Ranch)
+                        .Include(deer => deer.LevelOneRelationships)
+                        .Include(deer => deer.LevelTwoRelationships)
+                        .Include(deer => deer.LevelThreeRelationships)
+                        .ToList();
         }
 
         public Deer? GetById(Guid id)

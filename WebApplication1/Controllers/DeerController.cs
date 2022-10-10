@@ -72,6 +72,15 @@ namespace ReviewPlatformAPI.Controllers
             return _deerService.GetAll(isApproved);
         }
 
+
+
+        [HttpGet]
+        [Route("All-Filtered")]
+        public List<DeerModel> GetAllFiltered(string? deerName = "", string? ranchName = "", string? codon = "", decimal? gebv = null, int? age = null, int? sciScore = null, bool isApproved = false)
+        {
+            return _deerService.GetAllFiltered(isApproved, deerName, ranchName, codon, gebv, age, sciScore);
+        }
+
         [AllowAnonymous]
         [HttpGet("{id:guid}/ProfileImage")]
         public IActionResult GetProfileImage(Guid id)

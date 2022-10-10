@@ -149,6 +149,38 @@ namespace ReviewPlatformAPI.Services
             return modelList;
         }
 
+        public List<DeerModel> GetAllFiltered(bool isApproved, string? deerName, string? ranchName,string? codon,decimal? gebv, int? age, int? sciScore)
+        {
+            List<Deer> entityList = new List<Deer>();
+            List<DeerModel> modelList = new List<DeerModel>();
+
+            if(deerName == null)
+            {
+                deerName = "";
+            }
+
+            if (ranchName == null)
+            {
+                ranchName = "";
+            }
+
+            if (codon == null)
+            {
+                codon = "";
+            }
+
+            entityList = _deerRepo.GetAllFiltered(isApproved, deerName, ranchName, codon, gebv, age, sciScore);
+
+            foreach (Deer deer in entityList)
+            {
+                DeerModel newModel = CreateModelForIndividualLookup(deer);
+                newModel.deerFamily = MapDeerFamily(deer);
+                modelList.Add(newModel);
+            }
+
+            return modelList;
+        }
+
         public string CreateDeerRequest(DeerModel model)
         {
             Deer deer = ConverToEntityForAdd(model);
