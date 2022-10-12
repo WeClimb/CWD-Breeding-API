@@ -25,6 +25,8 @@ namespace ReviewPlatformAPI.Entities
         public string? SemenCost { get; set; }
         public Guid RanchId { get; set; }
         public string? ProfileImage { get; set; }
+        public string? VideoLink { get; set; }
+        public string? DenialReason { get; set; }
         public virtual Ranch Ranch { get; set; } = null!;
         public virtual ICollection<LevelOneRelationship> LevelOneRelationships { get; set; }
         public virtual ICollection<LevelThreeRelationship> LevelThreeRelationships { get; set; }

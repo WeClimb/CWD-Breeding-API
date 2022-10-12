@@ -1,6 +1,7 @@
 ﻿using CWDBreedingAPI.Constants;
 using CWDBreedingAPI.Models.Non_EntityModels;
 using CWDBreedingAPI.Utils;
+using ReviewPlatformAPI.Constants;
 using ReviewPlatformAPI.Entities;
 using ReviewPlatformAPI.Models;
 using ReviewPlatformAPI.Repos;
@@ -14,13 +15,15 @@ namespace ReviewPlatformAPI.Services
         private readonly RanchService _ranchService;
         private readonly AzureStorageHelper _storageHelper;
         private readonly IConfiguration _configuration;
+        private readonly EmailService _emailService;
 
-        public DeerService(DeerRepo deerRepo, RanchService ranchService, AzureStorageHelper storageHelper, IConfiguration configuration)
+        public DeerService(DeerRepo deerRepo, RanchService ranchService, AzureStorageHelper storageHelper, IConfiguration configuration, EmailService emailService)
         {
             _deerRepo = deerRepo;
             _ranchService = ranchService;
             _storageHelper = storageHelper;
             _configuration = configuration;
+            _emailService = emailService;
         }
         public override Deer ConverToEntityForAdd(DeerModel model)
         {
@@ -39,7 +42,10 @@ namespace ReviewPlatformAPI.Services
                 RanchId = model.RanchId,
                 CreateDate = DateTime.Now,
                 UpdateDate = DateTime.Now,
-                Status = "ACTIVE"
+                Status = "ACTIVE",
+                VideoLink = model.VideoLink,
+                ProfileImage = model.ProfileImage,  
+                DenialReason = model.DenialReason,
             };
         }
 
@@ -73,6 +79,9 @@ namespace ReviewPlatformAPI.Services
             entity.Dob = model.Dob;
             entity.SciScore = model.SciScore;
             entity.Gebu = model.Gebu;
+            entity.ProfileImage = model.ProfileImage;
+            entity.DenialReason = model.DenialReason;
+            model.VideoLink = entity.VideoLink;
         }
 
         public override DeerModel CreateModelForIndividualLookup(Deer entity)
@@ -92,6 +101,9 @@ namespace ReviewPlatformAPI.Services
                 SemenCost = entity.SemenCost,
                 RanchId = entity.RanchId,
                 Ranch = _ranchService.CreateModelForIndividualLookup(entity.Ranch),
+                VideoLink = entity.VideoLink,
+                ProfileImage = entity.ProfileImage,
+                DenialReason = entity.DenialReason,
             };
         }
 
@@ -127,7 +139,7 @@ namespace ReviewPlatformAPI.Services
             // calculate exaxt age
             decimal exactAge = (decimal)years + (days / yearDays);
             
-            exactAge = Math.Round(exactAge, 3);
+            exactAge = Math.Round(exactAge, 4);
             return exactAge;
 
         }
@@ -181,6 +193,24 @@ namespace ReviewPlatformAPI.Services
             return modelList;
         }
 
+        public void DenyRequest(DeerModel deer)
+        {
+            Ranch? ranch = _deerRepo.GetRanch(deer.RanchId);
+            deer.Status = "DENIED";
+            Update(deer.Id, deer);
+
+            if(ranch != null)
+            {
+                bool emailStatus = _emailService.SendEmail(
+                                   ranch.Email,
+                                   EmailConstants.DenyDeerSubject,
+                                   string.Format(EmailConstants.DenyDeerBody, ranch.OwnerFirstName, deer.Name, deer.DenialReason),
+                                   null
+           );
+        }
+           
+            
+        }
         public string CreateDeerRequest(DeerModel model)
         {
             Deer deer = ConverToEntityForAdd(model);
@@ -215,9 +245,9 @@ namespace ReviewPlatformAPI.Services
             return family;
         }
 
-        public ProviderProfileImageModel GetProfileImageBytes(Guid deerId)
+        public DeerProfileImageModel GetProfileImageBytes(Guid deerId)
         {
-            ProviderProfileImageModel model = new ProviderProfileImageModel();
+            DeerProfileImageModel model = new DeerProfileImageModel();
             string profileImageUrl;
             DeerModel deer = GetById(deerId);
 

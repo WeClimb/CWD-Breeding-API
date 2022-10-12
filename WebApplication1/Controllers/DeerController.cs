@@ -36,7 +36,7 @@ namespace ReviewPlatformAPI.Controllers
             try
             {
                 string id = _deerService.CreateDeerRequest(model);
-                return Ok();
+                return Ok(new { id});
             }
             catch(Exception ex)
             {
@@ -44,6 +44,7 @@ namespace ReviewPlatformAPI.Controllers
             }
         }
 
+        [AllowAnonymous]
         [HttpGet("{id:Guid}")]
         public IActionResult GetById(Guid id)
         {
@@ -64,7 +65,22 @@ namespace ReviewPlatformAPI.Controllers
             return Update(id, model);
         }
 
+        [Route("Denied")]
+        [HttpPut]
+        public IActionResult DenyDeerRequest(DeerModel model)
+            {
+            try
+            {
+                _deerService.DenyRequest(model);
+                return Ok();
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
 
+        [AllowAnonymous]
         [HttpGet]
         [Route("All")]
         public List<DeerModel> All(bool isApproved = false)
@@ -73,13 +89,14 @@ namespace ReviewPlatformAPI.Controllers
         }
 
 
-
+        [AllowAnonymous]
         [HttpGet]
         [Route("All-Filtered")]
         public List<DeerModel> GetAllFiltered(string? deerName = "", string? ranchName = "", string? codon = "", decimal? gebv = null, int? age = null, int? sciScore = null, bool isApproved = false)
         {
             return _deerService.GetAllFiltered(isApproved, deerName, ranchName, codon, gebv, age, sciScore);
         }
+
 
         [AllowAnonymous]
         [HttpGet("{id:guid}/ProfileImage")]

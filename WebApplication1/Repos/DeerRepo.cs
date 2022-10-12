@@ -75,7 +75,8 @@ namespace ReviewPlatformAPI.Repos
             IQueryable<Deer> query = LoadDbSet().Where(deer => deer.IsApproved == isApproved)
                                           .Where(deer => deer.Name.Contains(deerName))
                                           .Where(deer => deer.Ranch.Name.Contains(ranchName))
-                                          .Where(deer => deer.Codon.Contains(codon));
+                                          .Where(deer => deer.Codon.Contains(codon))
+                                          .Where(deer => deer.Status.ToLower() != "denied");
 
             if (gebv != null) {
                 query = query.Where(deer => deer.Gebu <= gebv);
@@ -98,6 +99,12 @@ namespace ReviewPlatformAPI.Repos
                         .ToList();
         }
 
+        public Ranch? GetRanch(Guid ranchId)
+        {
+            Ranch? ranch = _reviewPlatformDBContext.Ranches.Find(ranchId);
+            return ranch;
+        }
+
         public Deer? GetById(Guid id)
         {
             return LoadDbSet().Where(deer => deer.Id == id)
@@ -110,7 +117,7 @@ namespace ReviewPlatformAPI.Repos
 
         public List<Deer> GetAll(bool isPending)
         {
-            return LoadDbSet().Where(deer => deer.IsApproved == isPending)
+            return LoadDbSet().Where(deer => deer.IsApproved == isPending).Where(deer => deer.Status.ToLower() != "denied")
                               .Include(deer => deer.LevelOneRelationships)
                               .Include(deer => deer.LevelTwoRelationships)
                               .Include(deer => deer.LevelThreeRelationships)

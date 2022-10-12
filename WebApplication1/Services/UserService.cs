@@ -226,28 +226,11 @@ namespace ReviewPlatformAPI.Services
             }
 
             //string currentHost = _healthPossibleDbContext.Settings.FirstOrDefault(x => x.SettingKey == "CUSTOMER_URL").SettingValue;
-            string currentHost = "https://localhost:7145";
+            string currentHost = _configuration["CurrentHost"];
             string Url = "";
 
-            if (currentHost.Contains("localhost"))
-            {
-                Url = $"http://{currentHost}/{string.Concat("change-password/", changePasswordId.ToString())}";
-            }
-            //TODO: SET UP FOR CLOUD DB
-            //else
-            //{
-            //    UriBuilder changePasswordUriBuilder = new UriBuilder()
-            //    {
-            //        Scheme = "https",
-            //        Host = _healthPossibleDbContext.Settings.FirstOrDefault(x => x.SettingKey == "CUSTOMER_URL")
-            //                .SettingValue,
-            //        Path = string.Concat("change-password/", changePassword.ChangePasswordId.ToString())
-            //    };
-
-            //    Url = changePasswordUriBuilder.ToString();
-            //}
-
-
+            Url = $"{currentHost}{string.Concat("change-password/", changePasswordId.ToString())}";
+            
             bool emailStatus = _emailService.SendEmail(
                 user.Email,
                 EmailConstants.ChangePasswordSubject,

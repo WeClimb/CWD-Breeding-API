@@ -21,56 +21,18 @@ namespace CWDBreedingAPI.Constants
 
         public AzureBlobConfig(IConfiguration configuration, string userType, string fileCategory, string fileName, string fileExtension)
         {
-            this._configuration = configuration;
-            this.FullFileName = $"{fileName}.{fileExtension}";
-            this.FileExtension = fileExtension;
-
-            //if (this._configuration["DB_CONNECTION"].Contains(DBNames.UpperProdDB.GetDescriptionString()))
-            //{
-            //    switch (userType)
-            //    {
-            //        case UserLoginType.Customer:
-            //            // Empty until blob storage is needed for customer portal
-            //            // Add blob specific information here
-            //            break;
-            //        case UserLoginType.ServiceProvider:
-            //            this.AccountName = "upperproviderportal";
-            //            this.AccountKey = this._configuration["ProviderStorageAccountKey"];
-            //            this.Container = fileCategory;
-            //            break;
-            //        case UserLoginType.Employee:
-            //            // Empty until blob storage is needed for Employee portal
-            //            // Add blob specific information here
-            //            break;
-            //    }
-            //}
-            //else
-            //{
-            //    switch (userType)
-            //    {
-            //        case UserLoginType.Customer:
-            //            // Empty until blob storage is needed for customer portal
-            //            // Add blob specific information here
-            //            break;
-            //        case UserLoginType.ServiceProvider:
-            //            this.AccountName = "upperproviderportalqa";
-            //            this.AccountKey = this._configuration["ProviderStorageAccountKey"];
-            //            this.Container = fileCategory;
-            //            break;
-            //        case UserLoginType.Employee:
-            //            // Empty until blob storage is needed for Employee portal
-            //            // Add blob specific information here
-            //            break;
-            //    }
-            //}
+            _configuration = configuration;
+            FullFileName = $"{fileName}.{fileExtension}";
+            FileExtension = fileExtension;
 
             // Create a URI to the blob  https://upperproviderportalqa.blob.core.windows.net/profile/upper5.png
+            //                                     https://deerprofile.blob.core.windows.net/blobcontainer
 
-            this.AccountName = "deerprofile";
-            this.AccountKey = this._configuration["AzureAccountKey"];
-            this.Container = "blobcontainer";
+            AccountName = "deerprofile";
+            AccountKey = _configuration["AzureAccountKey"];
+            Container = "blobcontainer";
 
-            this.BlobUri = new Uri("https://" +
+            BlobUri = new Uri("https://" +
                                   this.AccountName +
                                   ".blob.core.windows.net/" +
                                   this.Container +

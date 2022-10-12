@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\kcowh\\Repos\\CWD-Breeding\\CWD-Breeding-API\\WebApplication1\\CWDBreedingAPI.csproj": {}
+    "C:\\Users\\WeCli\\Repos\\CWDBreeding\\CWD-Breeding-API\\WebApplication1\\CWDBreedingAPI.csproj": {}
   },
   "projects": {
-    "C:\\Users\\kcowh\\Repos\\CWD-Breeding\\CWD-Breeding-API\\WebApplication1\\CWDBreedingAPI.csproj": {
+    "C:\\Users\\WeCli\\Repos\\CWDBreeding\\CWD-Breeding-API\\WebApplication1\\CWDBreedingAPI.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\kcowh\\Repos\\CWD-Breeding\\CWD-Breeding-API\\WebApplication1\\CWDBreedingAPI.csproj",
+        "projectUniqueName": "C:\\Users\\WeCli\\Repos\\CWDBreeding\\CWD-Breeding-API\\WebApplication1\\CWDBreedingAPI.csproj",
         "projectName": "CWDBreedingAPI",
-        "projectPath": "C:\\Users\\kcowh\\Repos\\CWD-Breeding\\CWD-Breeding-API\\WebApplication1\\CWDBreedingAPI.csproj",
-        "packagesPath": "C:\\Users\\kcowh\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\kcowh\\Repos\\CWD-Breeding\\CWD-Breeding-API\\WebApplication1\\obj\\",
+        "projectPath": "C:\\Users\\WeCli\\Repos\\CWDBreeding\\CWD-Breeding-API\\WebApplication1\\CWDBreedingAPI.csproj",
+        "packagesPath": "C:\\Users\\WeCli\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\WeCli\\Repos\\CWDBreeding\\CWD-Breeding-API\\WebApplication1\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\kcowh\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\WeCli\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -115,7 +115,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.200\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.300\\RuntimeIdentifierGraph.json"
         }
       }
     }
