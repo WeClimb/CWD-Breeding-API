@@ -7,6 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using ReviewPlatformAPI.Utils;
 using ReviewPlatformAPI.Constants;
+using System.Text.RegularExpressions;
 
 namespace ReviewPlatformAPI.Services
 {
@@ -67,7 +68,7 @@ namespace ReviewPlatformAPI.Services
                 Website = model.Website,
                 Address = model.Address,
                 Zipcode = model.Zipcode,
-                PhoneNumber = model.PhoneNumber,
+                PhoneNumber = CheckPhoneFormat(model.PhoneNumber),
                 Status = "ACTIVE",
                 Email = model.Email,
                 OwnerFirstName = model.OwnerFirstName,
@@ -77,6 +78,18 @@ namespace ReviewPlatformAPI.Services
                 CreateDate = DateTime.Now,
                 UpdateDate = DateTime.Now,
             };
+        }
+
+        private string CheckPhoneFormat(string? phoneNumber)
+        {
+            phoneNumber = Regex.Replace(phoneNumber, "[^.0-9]", "");
+
+            phoneNumber = "(" + phoneNumber;
+            phoneNumber = phoneNumber.Insert(4, ")");
+            phoneNumber = phoneNumber.Insert(8, "-");
+            phoneNumber = phoneNumber.Insert(5, " ");
+
+            return phoneNumber;
         }
 
         public override void CopyDataForUpdate(Ranch entity, RanchModel model)
@@ -95,7 +108,7 @@ namespace ReviewPlatformAPI.Services
             }
             if (model.PhoneNumber != null && model.PhoneNumber.Length != 0)
             {
-                entity.PhoneNumber = model.PhoneNumber;
+                entity.PhoneNumber = CheckPhoneFormat(model.PhoneNumber);
             }
             if (model.OwnerFirstName != null && model.OwnerFirstName.Length != 0)
             {

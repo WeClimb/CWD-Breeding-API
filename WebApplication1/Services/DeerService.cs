@@ -81,7 +81,7 @@ namespace ReviewPlatformAPI.Services
             entity.Gebu = model.Gebu;
             entity.ProfileImage = model.ProfileImage;
             entity.DenialReason = model.DenialReason;
-            model.VideoLink = entity.VideoLink;
+            entity.VideoLink = model.VideoLink;
         }
 
         public override DeerModel CreateModelForIndividualLookup(Deer entity)
@@ -106,6 +106,27 @@ namespace ReviewPlatformAPI.Services
                 DenialReason = entity.DenialReason,
             };
         }
+
+        private ICollection<MediaModel> MapMedia(ICollection<Media> media)
+        {
+            List<MediaModel> mediaModels = new List<MediaModel>();
+            foreach(Media item in media)
+            {
+                MediaModel newMedia = new MediaModel();
+                newMedia.Id = item.Id;
+                newMedia.DeerId = item.DeerId;
+                newMedia.UpdateDate = item.UpdateDate;
+                newMedia.CreateDate = item.CreateDate;
+                newMedia.Status = item.Status;
+                newMedia.BlobId = item.BlobId;
+                newMedia.Type = item.Type;
+
+                mediaModels.Add(newMedia);
+            }
+
+            return mediaModels;
+        }
+
 
         public override DeerModel CreateModelForListLookup(Deer entity)
         {
@@ -199,12 +220,15 @@ namespace ReviewPlatformAPI.Services
             deer.Status = "DENIED";
             Update(deer.Id, deer);
 
-            if(ranch != null)
+            string fullName = deer.Ranch.OwnerFirstName + " " + deer.Ranch.OwnerlastName;
+            string loginLink = _configuration["CurrentHost"] + "login";
+
+            if (ranch != null)
             {
                 bool emailStatus = _emailService.SendEmail(
                                    ranch.Email,
                                    EmailConstants.DenyDeerSubject,
-                                   string.Format(EmailConstants.DenyDeerBody, ranch.OwnerFirstName, deer.Name, deer.DenialReason),
+                                   string.Format(EmailConstants.DenyDeerBody, fullName, deer.Name, deer.DenialReason, loginLink),
                                    null
            );
         }
@@ -323,6 +347,89 @@ namespace ReviewPlatformAPI.Services
             {
                 throw new Exception($"File type of {azureConfig.FileExtension} is not a valid file type");
             }
+        }
+
+
+        public bool SaveImage(Guid deerId, IFormFile profileImg)
+        {
+            DeerModel deer = GetById(deerId);
+
+            if (deer == null)
+            {
+                throw new Exception("Not a valid Deer");
+            }
+
+            // Create Stream
+            Stream dataStream = profileImg.OpenReadStream();
+
+            // Create the config for accessing the blob storage
+            AzureBlobConfig azureConfig = new AzureBlobConfig(_configuration, "Ranch", FileCategories.image.ToString(), Guid.NewGuid().ToString(), FileUtil.GetFileType(dataStream));
+
+            // Image must be a PNG or JPG
+            if (azureConfig.FileExtension.ToLower().Equals(FileTypeChecker.Types.PortableNetworkGraphic.TypeExtension.ToLower()) || azureConfig.FileExtension.ToLower().Equals(FileTypeChecker.Types.JointPhotographicExpertsGroup.TypeExtension.ToLower()))
+            {
+                // Check if there is already a profile image related to this user, if so delete on Azure
+                if (_storageHelper.DoesStorageFileExist(azureConfig))
+                {
+                    _storageHelper.RemoveFileFromStorage(azureConfig);
+                }
+
+                // Verify file size
+                if (!FileUtil.IsFileCorrectSize(profileImg))
+                {
+                    throw new Exception($"File size too large, must be {FileUtil._fileSizeBytes / 1000} or smaller");
+                }
+
+                // Upload file
+                if (_storageHelper.UploadFileToStorage(dataStream, azureConfig))
+                {
+                    string imageUrl = azureConfig.BlobUri.ToString();
+
+                    AddImage(deer.Id, imageUrl);
+
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                throw new Exception($"File type of {azureConfig.FileExtension} is not a valid file type");
+            }
+        }
+
+        public List<DeerProfileImageModel> GetImageBytes(Guid deerId)
+        {
+            List<DeerProfileImageModel> imageBytes = new List<DeerProfileImageModel>();
+            ICollection<Media> deerMedia = _deerRepo.GetDeerMedia(deerId);
+
+
+            if (deerMedia.Count != 0)
+            {
+                foreach (var image in deerMedia)
+                {
+                    DeerProfileImageModel model = new DeerProfileImageModel();
+                    byte[] fileData = _storageHelper.DownloadFile(image.BlobId);
+
+                    model.ContentType = FileUtil.GetContentType(fileData);
+                    model.ImageData = _storageHelper.ConvertToBase64Format(Convert.ToBase64String(fileData), model.ContentType);
+
+                    imageBytes.Add(model);
+                }
+
+                return imageBytes;
+            } 
+            else
+            {
+                return imageBytes;
+            }
+        }
+
+        private void AddImage(Guid deerId, string imageUrl)
+        {
+            _deerRepo.SaveImageToDeer(deerId, imageUrl);
         }
 
         public override BaseRepo<Deer> LoadRepo()

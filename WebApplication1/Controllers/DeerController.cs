@@ -105,12 +105,39 @@ namespace ReviewPlatformAPI.Controllers
             return Ok(new { data = _deerService.GetProfileImageBytes(id) });
         }
 
+        [AllowAnonymous]
+        [HttpGet("{id:guid}/Images")]
+        public IActionResult GetImages(Guid id)
+        {
+            return Ok(new { data = _deerService.GetImageBytes(id) });
+        }
+
         [HttpPost("{id:guid}/ProfileImage")]
         public IActionResult SaveProfileImage(Guid id, [FromForm] IFormFile profileImg)
         {
             try
             {
                 if (_deerService.SaveProfileImage(id, profileImg))
+                {
+                    return Ok();
+                }
+                else
+                {
+                    return BadRequest("Image did not save");
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("{id:guid}/Extra-Image")]
+        public IActionResult SaveImage(Guid id, [FromForm] IFormFile image)
+        {
+            try
+            {
+                if (_deerService.SaveImage(id, image))
                 {
                     return Ok();
                 }

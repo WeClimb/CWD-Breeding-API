@@ -70,6 +70,11 @@ namespace ReviewPlatformAPI.Repos
        
         }
 
+        public ICollection<Media> GetDeerMedia(Guid deerId)
+        {
+            return _reviewPlatformDBContext.Media.Where(media => media.DeerId == deerId).ToList();
+        }
+
         public List<Deer> GetAllFiltered(bool isApproved,string? deerName, string? ranchName, string? codon, decimal? gebv,int? age,int? sciScore)
         {
             IQueryable<Deer> query = LoadDbSet().Where(deer => deer.IsApproved == isApproved)
@@ -97,6 +102,21 @@ namespace ReviewPlatformAPI.Repos
                         .Include(deer => deer.LevelTwoRelationships)
                         .Include(deer => deer.LevelThreeRelationships)
                         .ToList();
+        }
+
+        public void SaveImageToDeer(Guid deerId, string imageUrl)
+        {
+            Media media = new Media();
+            media.Id = Guid.NewGuid();
+            media.DeerId = deerId;
+            media.CreateDate = DateTime.Now;
+            media.UpdateDate = DateTime.Now;
+            media.Status = "ACTIVE";
+            media.BlobId = imageUrl;
+            media.Type = "image";
+
+            _reviewPlatformDBContext.Media.Add(media);
+            _reviewPlatformDBContext.SaveChanges();
         }
 
         public Ranch? GetRanch(Guid ranchId)

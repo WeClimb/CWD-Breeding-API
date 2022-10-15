@@ -23,7 +23,7 @@ namespace ReviewPlatformAPI.Controllers
             } 
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new { ex.Message });
             }
         }
 

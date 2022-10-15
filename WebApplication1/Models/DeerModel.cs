@@ -7,13 +7,7 @@ namespace ReviewPlatformAPI.Models
 {
     public partial class DeerModel : BaseModel
     {
-        public DeerModel()
-        {
-            LevelOneRelationships = new HashSet<LevelOneRelationshipModel>();
-            LevelThreeRelationships = new HashSet<LevelThreeRelationshipModel>();
-            LevelTwoRelationships = new HashSet<LevelTwoRelationshipModel>();
-            Media = new HashSet<MediaModel>();
-        }
+
 
         public string Name { get; set; } = null!;
         public string Nadr { get; set; } = null!;
@@ -31,9 +25,6 @@ namespace ReviewPlatformAPI.Models
         public string? DenialReason { get; set; }
         public virtual DeerFamilyModel? deerFamily { get; set;}
         public virtual RanchModel? Ranch { get; set; } = null!;
-        public virtual ICollection<LevelOneRelationshipModel> LevelOneRelationships { get; set; }
-        public virtual ICollection<LevelThreeRelationshipModel> LevelThreeRelationships { get; set; }
-        public virtual ICollection<LevelTwoRelationshipModel> LevelTwoRelationships { get; set; }
-        public virtual ICollection<MediaModel> Media { get; set; }
+
     }
 }
