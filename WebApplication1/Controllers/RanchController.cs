@@ -61,6 +61,22 @@ namespace ReviewPlatformAPI.Controllers
 
         [AllowAnonymous]
         [HttpPost]
+        [Route("Forgot-Password")]
+        public IActionResult ForgotPassword(string email)
+        {
+            try
+            {
+                _ranchService.ForgotPassword(email);
+                return Ok(new { message = "Success!" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
         [Route("ChangePassword")]
         public IActionResult ChangePassword(PasswordRequestModel passwordRequestModel)
         {
