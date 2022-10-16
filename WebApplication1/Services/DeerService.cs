@@ -44,7 +44,7 @@ namespace ReviewPlatformAPI.Services
                 UpdateDate = DateTime.Now,
                 Status = "ACTIVE",
                 VideoLink = model.VideoLink,
-                ProfileImage = model.ProfileImage,  
+                ProfileImage = model.ProfileImage,
                 DenialReason = model.DenialReason,
             };
         }
@@ -57,7 +57,7 @@ namespace ReviewPlatformAPI.Services
                 DeerModel newModel = CreateModelForIndividualLookup(deer);
                 newModel.deerFamily = MapDeerFamily(deer);
                 return newModel;
-            } 
+            }
             else
             {
                 return null;
@@ -110,7 +110,7 @@ namespace ReviewPlatformAPI.Services
         private ICollection<MediaModel> MapMedia(ICollection<Media> media)
         {
             List<MediaModel> mediaModels = new List<MediaModel>();
-            foreach(Media item in media)
+            foreach (Media item in media)
             {
                 MediaModel newMedia = new MediaModel();
                 newMedia.Id = item.Id;
@@ -140,7 +140,7 @@ namespace ReviewPlatformAPI.Services
         }
 
         private decimal? CalculateAgeFromDOB(DateTime birthDate)
-    {
+        {
             // get current date (don't call DateTime.Today repeatedly, as it changes)
             DateTime today = DateTime.Today;
             // get the last birthday
@@ -159,7 +159,7 @@ namespace ReviewPlatformAPI.Services
             decimal days = (today - last).Days;
             // calculate exaxt age
             decimal exactAge = (decimal)years + (days / yearDays);
-            
+
             exactAge = Math.Round(exactAge, 4);
             return exactAge;
 
@@ -182,12 +182,12 @@ namespace ReviewPlatformAPI.Services
             return modelList;
         }
 
-        public List<DeerModel> GetAllFiltered(bool isApproved, string? deerName, string? ranchName,string? codon,decimal? gebv, int? age, int? sciScore)
+        public List<DeerModel> GetAllFiltered(bool isApproved, string? deerName, string? ranchName, string? codon, decimal? gebv, int? age, int? sciScore)
         {
             List<Deer> entityList = new List<Deer>();
             List<DeerModel> modelList = new List<DeerModel>();
 
-            if(deerName == null)
+            if (deerName == null)
             {
                 deerName = "";
             }
@@ -230,10 +230,26 @@ namespace ReviewPlatformAPI.Services
                                    EmailConstants.DenyDeerSubject,
                                    string.Format(EmailConstants.DenyDeerBody, fullName, deer.Name, deer.DenialReason, loginLink),
                                    null
-           );
+                );
+            }
         }
-           
-            
+        public void ApproveRequest(DeerModel deer)
+        {
+            Ranch? ranch = _deerRepo.GetRanch(deer.RanchId);
+            deer.Status = "ACTIVE";
+            Update(deer.Id, deer);
+
+            string loginLink = _configuration["CurrentHost"] + "login";
+
+            if (ranch != null)
+            {
+                bool emailStatus = _emailService.SendEmail(
+                                   ranch.Email,
+                                   EmailConstants.ApproveDeerRequestSubject,
+                                   string.Format(EmailConstants.ApproveDeerRequestBody, deer.Name, loginLink),
+                                   null
+                );
+            }
         }
         public string CreateDeerRequest(DeerModel model)
         {
@@ -241,7 +257,22 @@ namespace ReviewPlatformAPI.Services
             deer.Id = Guid.NewGuid();
             model.Id = deer.Id;
             _deerRepo.Create(deer);
-            _deerRepo.CreateDeerPedigree(model.Id,model.deerFamily);
+            _deerRepo.CreateDeerPedigree(model.Id, model.deerFamily);
+
+            Ranch? ranch = _deerRepo.GetRanch(deer.RanchId);        
+
+            string fullName = deer.Ranch.OwnerFirstName + " " + deer.Ranch.OwnerlastName;
+            string loginLink = _configuration["CurrentHost"] + "login";
+
+            if (ranch != null)
+            {
+                bool emailStatus = _emailService.SendEmail(
+                                   ranch.Email,
+                                   EmailConstants.DeerSubmissionSubject,
+                                   string.Format(EmailConstants.DeerSubmissionBody, fullName, deer.Name, loginLink),
+                                   null
+                );
+            }
             return deer.Id.ToString();
         }
 
@@ -420,7 +451,7 @@ namespace ReviewPlatformAPI.Services
                 }
 
                 return imageBytes;
-            } 
+            }
             else
             {
                 return imageBytes;

@@ -80,6 +80,22 @@ namespace ReviewPlatformAPI.Controllers
             }
         }
 
+
+        [Route("Approve")]
+        [HttpPut]
+        public IActionResult ApproveDeerRequest(DeerModel model)
+        {
+            try
+            {
+                _deerService.ApproveRequest(model);
+                return Ok();
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
         [AllowAnonymous]
         [HttpGet]
         [Route("All")]
