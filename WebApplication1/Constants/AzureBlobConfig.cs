@@ -30,7 +30,7 @@ namespace CWDBreedingAPI.Constants
 
             AccountName = "deerprofile";
             AccountKey = _configuration["AzureAccountKey"];
-            Container = "blobcontainer";
+            Container = _configuration["Container"];
 
             BlobUri = new Uri("https://" +
                                   this.AccountName +

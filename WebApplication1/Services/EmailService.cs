@@ -30,7 +30,7 @@ namespace ReviewPlatformAPI.Services
             var apiKey = _configuration["SendGridMailSettings:ApiKey"];
             var client = new SendGridClient(apiKey);
 
-            var sendGridFrom = new EmailAddress("weclimbdevtesting@gmail.com", "CWD Breeding");
+            var sendGridFrom = new EmailAddress("deerwizard64@gmail.com", "CWD Breeding");
             var sendGridTo = new EmailAddress(to);
             var sendGridCC = new List<EmailAddress>();
             var htmlContent = body;
