@@ -78,6 +78,7 @@ namespace ReviewPlatformAPI.Repos
         public List<Deer> GetAllFiltered(bool isApproved,string? deerName, string? ranchName, string? codon, decimal? gebv,int? age,int? sciScore)
         {
             IQueryable<Deer> query = LoadDbSet().Where(deer => deer.IsApproved == isApproved)
+                                          .Where(deer => deer.IsPaid == true)
                                           .Where(deer => deer.Name.Contains(deerName))
                                           .Where(deer => deer.Ranch.Name.Contains(ranchName))
                                           .Where(deer => deer.Codon.Contains(codon))
@@ -104,7 +105,7 @@ namespace ReviewPlatformAPI.Repos
                         .ToList();
         }
 
-        public void SaveImageToDeer(Guid deerId, string imageUrl)
+        public void SaveImageToDeer(Guid deerId, string imageUrl, int? age)
         {
             Media media = new Media();
             media.Id = Guid.NewGuid();
@@ -114,6 +115,7 @@ namespace ReviewPlatformAPI.Repos
             media.Status = "ACTIVE";
             media.BlobId = imageUrl;
             media.Type = "image";
+            media.AgeOfBuckDisplayed = age;
 
             _reviewPlatformDBContext.Media.Add(media);
             _reviewPlatformDBContext.SaveChanges();
@@ -135,9 +137,10 @@ namespace ReviewPlatformAPI.Repos
                               .FirstOrDefault();
         }
 
-        public List<Deer> GetAll(bool isPending)
+        public List<Deer> GetAll(bool isPending, bool isPaid)
         {
-            return LoadDbSet().Where(deer => deer.IsApproved == isPending).Where(deer => deer.Status.ToLower() != "denied")
+            return LoadDbSet().Where(deer => deer.IsApproved == isPending && deer.IsPaid == isPaid)
+                              .Where(deer => deer.Status.ToLower() != "denied")
                               .Include(deer => deer.LevelOneRelationships)
                               .Include(deer => deer.LevelTwoRelationships)
                               .Include(deer => deer.LevelThreeRelationships)

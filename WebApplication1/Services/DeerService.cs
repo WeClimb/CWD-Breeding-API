@@ -46,6 +46,10 @@ namespace ReviewPlatformAPI.Services
                 VideoLink = model.VideoLink,
                 ProfileImage = model.ProfileImage,
                 DenialReason = model.DenialReason,
+                AgeOfBuckDisplayed = model.AgeOfBuckDisplayed,
+                Description = model.Description,
+                IsPaid = model.IsPaid,
+                PaidDate = model.PaidDate,
             };
         }
 
@@ -82,6 +86,10 @@ namespace ReviewPlatformAPI.Services
             entity.ProfileImage = model.ProfileImage;
             entity.DenialReason = model.DenialReason;
             entity.VideoLink = model.VideoLink;
+            entity.AgeOfBuckDisplayed = model.AgeOfBuckDisplayed;
+            entity.Description = model.Description;
+            entity.IsPaid = model.IsPaid;
+            entity.PaidDate = model.PaidDate;
         }
 
         public override DeerModel CreateModelForIndividualLookup(Deer entity)
@@ -104,6 +112,10 @@ namespace ReviewPlatformAPI.Services
                 VideoLink = entity.VideoLink,
                 ProfileImage = entity.ProfileImage,
                 DenialReason = entity.DenialReason,
+                AgeOfBuckDisplayed = entity.AgeOfBuckDisplayed,
+                Description = entity.Description,
+                IsPaid = entity.IsPaid,
+                PaidDate = entity.PaidDate,
             };
         }
 
@@ -165,12 +177,12 @@ namespace ReviewPlatformAPI.Services
 
         }
 
-        public List<DeerModel> GetAll(bool isPending)
+        public List<DeerModel> GetAll(bool isPending, bool isPaid)
         {
             List<Deer> entityList = new List<Deer>();
             List<DeerModel> modelList = new List<DeerModel>();
 
-            entityList = _deerRepo.GetAll(isPending);
+            entityList = _deerRepo.GetAll(isPending, isPaid);
 
             foreach (Deer deer in entityList)
             {
@@ -330,7 +342,7 @@ namespace ReviewPlatformAPI.Services
             }
         }
 
-        public bool SaveProfileImage(Guid deerId, IFormFile profileImg)
+        public bool SaveProfileImage(Guid deerId, IFormFile profileImg, int? age)
         {
             DeerModel deer = GetById(deerId);
 
@@ -364,6 +376,7 @@ namespace ReviewPlatformAPI.Services
                 if (_storageHelper.UploadFileToStorage(dataStream, azureConfig))
                 {
                     deer.ProfileImage = azureConfig.BlobUri.ToString();
+                    deer.AgeOfBuckDisplayed = age;
 
                     Update(deer.Id, deer);
 
@@ -381,7 +394,7 @@ namespace ReviewPlatformAPI.Services
         }
 
 
-        public bool SaveImage(Guid deerId, IFormFile profileImg)
+        public bool SaveImage(Guid deerId, IFormFile profileImg, int? age)
         {
             DeerModel deer = GetById(deerId);
 
@@ -416,7 +429,7 @@ namespace ReviewPlatformAPI.Services
                 {
                     string imageUrl = azureConfig.BlobUri.ToString();
 
-                    AddImage(deer.Id, imageUrl);
+                    AddImage(deer.Id, imageUrl, age);
 
                     return true;
                 }
@@ -431,23 +444,20 @@ namespace ReviewPlatformAPI.Services
             }
         }
 
-        public List<DeerProfileImageModel> GetImageBytes(Guid deerId)
+        public Dictionary<string, int?> GetImageBytes(Guid deerId)
         {
-            List<DeerProfileImageModel> imageBytes = new List<DeerProfileImageModel>();
+            Dictionary<string, int?> imageBytes = new Dictionary<string, int?>();
             ICollection<Media> deerMedia = _deerRepo.GetDeerMedia(deerId);
-
-
             if (deerMedia.Count != 0)
             {
                 foreach (var image in deerMedia)
                 {
-                    DeerProfileImageModel model = new DeerProfileImageModel();
-                    byte[] fileData = _storageHelper.DownloadFile(image.BlobId);
-
-                    model.ContentType = FileUtil.GetContentType(fileData);
-                    model.ImageData = _storageHelper.ConvertToBase64Format(Convert.ToBase64String(fileData), model.ContentType);
-
-                    imageBytes.Add(model);
+                    int? ageOfBuckDisplayed = image.AgeOfBuckDisplayed;
+                    if (!ageOfBuckDisplayed.HasValue)
+                    {
+                        ageOfBuckDisplayed = 0;
+                    }
+                    imageBytes.Add(image.BlobId, ageOfBuckDisplayed);
                 }
 
                 return imageBytes;
@@ -458,9 +468,10 @@ namespace ReviewPlatformAPI.Services
             }
         }
 
-        private void AddImage(Guid deerId, string imageUrl)
+
+        private void AddImage(Guid deerId, string imageUrl, int? age)
         {
-            _deerRepo.SaveImageToDeer(deerId, imageUrl);
+            _deerRepo.SaveImageToDeer(deerId, imageUrl, age);
         }
 
         public override BaseRepo<Deer> LoadRepo()

@@ -28,9 +28,11 @@ namespace ReviewPlatformAPI.Services
         private bool SendViaSendGrid(string to, string subject, string body, List<string>? ccs)
         {
             var apiKey = _configuration["SendGridMailSettings:ApiKey"];
+            var sendingEmail = _configuration["SendGridMailSettings:DomainName"];
+            var sendingName = _configuration["SendGridMailSettings:SenderName"];
             var client = new SendGridClient(apiKey);
 
-            var sendGridFrom = new EmailAddress("deerwizard64@gmail.com", "CWD Breeding");
+            var sendGridFrom = new EmailAddress(sendingEmail, sendingName);
             var sendGridTo = new EmailAddress(to);
             var sendGridCC = new List<EmailAddress>();
             var htmlContent = body;

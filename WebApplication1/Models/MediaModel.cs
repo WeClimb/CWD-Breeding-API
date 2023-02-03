@@ -8,6 +8,7 @@ namespace ReviewPlatformAPI.Models
         public Guid DeerId { get; set; }
         public string BlobId { get; set; } = null!;
         public string Type { get; set; } = null!;
+        public int? AgeOfBuckDisplayed { get; set; } = 0;
 
         public virtual DeerModel Deer { get; set; } = null!;
     }

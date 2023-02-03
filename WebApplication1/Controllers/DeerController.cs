@@ -26,7 +26,7 @@ namespace ReviewPlatformAPI.Controllers
         [HttpPost]
         public IActionResult CreateDeer(DeerModel model)
         {
-            return Create(model);
+            return Create(model);       
         }
 
         [HttpPost]
@@ -99,9 +99,9 @@ namespace ReviewPlatformAPI.Controllers
         [AllowAnonymous]
         [HttpGet]
         [Route("All")]
-        public List<DeerModel> All(bool isApproved = false)
+        public List<DeerModel> All(bool isApproved = false, bool isPaid = true)
         {
-            return _deerService.GetAll(isApproved);
+            return _deerService.GetAll(isApproved, isPaid);
         }
 
 
@@ -129,11 +129,11 @@ namespace ReviewPlatformAPI.Controllers
         }
 
         [HttpPost("{id:guid}/ProfileImage")]
-        public IActionResult SaveProfileImage(Guid id, [FromForm] IFormFile profileImg)
+        public IActionResult SaveProfileImage(Guid id, [FromForm] IFormFile profileImg, int? age)
         {
             try
             {
-                if (_deerService.SaveProfileImage(id, profileImg))
+                if (_deerService.SaveProfileImage(id, profileImg, age))
                 {
                     return Ok();
                 }
@@ -149,11 +149,11 @@ namespace ReviewPlatformAPI.Controllers
         }
 
         [HttpPost("{id:guid}/Extra-Image")]
-        public IActionResult SaveImage(Guid id, [FromForm] IFormFile image)
+        public IActionResult SaveImage(Guid id, [FromForm] IFormFile image, int? age)
         {
             try
             {
-                if (_deerService.SaveImage(id, image))
+                if (_deerService.SaveImage(id, image, age))
                 {
                     return Ok();
                 }

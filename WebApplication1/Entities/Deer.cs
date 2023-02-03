@@ -17,10 +17,14 @@ namespace ReviewPlatformAPI.Entities
         public string Nadr { get; set; } = null!;
         public DateTime Dob { get; set; }
         public decimal? Age { get; set; }
+        public decimal? AgeOfBuckDisplayed { get; set; }
+        public string Description { get; set; } = "";
         public decimal Gebu { get; set; }
         public string Codon { get; set; }
         public decimal? SciScore { get; set; }
         public bool IsApproved { get; set; }
+        public bool IsPaid { get; set; } = false;
+        public DateTime? PaidDate { get; set; }
         public bool SemenAvailable { get; set; }
         public string? SemenCost { get; set; }
         public Guid RanchId { get; set; }
