@@ -69,6 +69,7 @@ WebApplication1/bin/Debug/net6.0/ReviewPlatformAPI.pdb
 *.pdb
 *.v1
 *.v2
+
 WebApplication1/.vs/Review-Platform-API/v17/.suo
 *.v2
 *.v2
@@ -119,3 +120,12 @@ WebApplication1/CWDBreedingAPI.csproj.user
 WebApplication1/obj/Release/net6.0/PubTmp/CWDBreedingAPI.Parameters.xml
 WebApplication1/Properties/PublishProfiles/cwdBreedingAPIQA - Web Deploy.pubxml.user
 WebApplication1/.vs/CWD-Breeding-API/FileContentIndex/07320852-b58a-4d60-8bc5-b126e0f18297.vsidx
+WebApplication1/.vs/CWD-Breeding-API/FileContentIndex/5fcc0825-13fa-4e31-ade9-03f66735592c.vsidx
+WebApplication1/.vs/CWD-Breeding-API/FileContentIndex/6f5cdf20-4d46-4c16-aa3d-409fbcf2d2cf.vsidx
+WebApplication1/.vs/CWD-Breeding-API/FileContentIndex/884326fa-5c6c-420e-8aa5-ab9ed3395ac9.vsidx
+WebApplication1/.vs/CWD-Breeding-API/FileContentIndex/9332b6d6-00ea-49db-9fed-0d0ac2c6dfbc.vsidx
+WebApplication1/.vs/CWD-Breeding-API/FileContentIndex/acece5bc-5363-40c2-a28c-3e514db4ba41.vsidx
+WebApplication1/obj/CWDBreedingAPI.csproj.nuget.dgspec.json
+WebApplication1/obj/Debug/net6.0/CWDBreedingAPI.csproj.FileListAbsolute.txt
+WebApplication1/obj/Release/net6.0/CWDBreedingAPI.csproj.BuildWithSkipAnalyzers
+WebApplication1/Properties/PublishProfiles/cwdBreedingAPIQA - Web Deploy.pubxml.user

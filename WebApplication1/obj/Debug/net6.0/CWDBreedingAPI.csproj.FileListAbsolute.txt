@@ -180,3 +180,5 @@ C:\Users\WeCli\Repos\CWDBreeding\CWD-Breeding-API\WebApplication1\obj\Debug\net6
 C:\Users\WeCli\Repos\CWDBreeding\CWD-Breeding-API\WebApplication1\obj\Debug\net6.0\CWDBreedingAPI.pdb
 C:\Users\WeCli\Repos\CWDBreeding\CWD-Breeding-API\WebApplication1\obj\Debug\net6.0\CWDBreedingAPI.genruntimeconfig.cache
 C:\Users\WeCli\Repos\CWDBreeding\CWD-Breeding-API\WebApplication1\obj\Debug\net6.0\ref\CWDBreedingAPI.dll
+C:\Users\WeCli\Repos\CWDBreeding\CWD-Breeding-API\WebApplication1\bin\Debug\net6.0\RestSharp.dll
+C:\Users\WeCli\Repos\CWDBreeding\CWD-Breeding-API\WebApplication1\bin\Debug\net6.0\Stripe.dll
