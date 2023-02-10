@@ -135,11 +135,9 @@ namespace ReviewPlatformAPI.Services
 
                 mediaModels.Add(newMedia);
             }
-
+            
             return mediaModels;
         }
-
-
         public override DeerModel CreateModelForListLookup(Deer entity)
         {
             return new DeerModel

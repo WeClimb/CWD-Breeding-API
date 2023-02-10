@@ -65,6 +65,8 @@ namespace ReviewPlatformAPI
 
             services.AddScoped<AzureStorageHelper, AzureStorageHelper>();
 
+            services.AddScoped<StripeService, StripeService>();
+
             services.AddHealthChecks();
 
             services.AddCors();

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using CWDBreedingAPI.Models.Non_EntityModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ReviewPlatformAPI.Entities;
 using ReviewPlatformAPI.Models;
@@ -167,5 +168,15 @@ namespace ReviewPlatformAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        //[HttpPost("Create-Subscriptions")]
+        //public async Task<IActionResult> CreateSubscriptions([FromBody] List<DeerSubsciptionModel> requests)
+        //{
+        //    var checkoutSession = await _deerService.CreateSubscriptions(requests);
+
+        //    return Ok(checkoutSession);
+        //}
+
+
     }
 }
