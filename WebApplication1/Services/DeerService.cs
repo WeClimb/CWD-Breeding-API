@@ -192,7 +192,7 @@ namespace ReviewPlatformAPI.Services
             return modelList;
         }
 
-        public List<DeerModel> GetAllFiltered(bool isApproved, string? deerName, string? ranchName, string? codon, decimal? gebv, int? age, int? sciScore)
+        public List<DeerModel> GetAllFiltered(bool isApproved, string? deerName, string? ranchName, string? codon, decimal? gebv, int? age, int? sciScore, int? page)
         {
             List<Deer> entityList = new List<Deer>();
             List<DeerModel> modelList = new List<DeerModel>();
@@ -212,7 +212,7 @@ namespace ReviewPlatformAPI.Services
                 codon = "";
             }
 
-            entityList = _deerRepo.GetAllFiltered(isApproved, deerName, ranchName, codon, gebv, age, sciScore);
+            entityList = _deerRepo.GetAllFiltered(isApproved, deerName, ranchName, codon, gebv, age, sciScore, page);
 
             foreach (Deer deer in entityList)
             {
@@ -269,21 +269,45 @@ namespace ReviewPlatformAPI.Services
             _deerRepo.Create(deer);
             _deerRepo.CreateDeerPedigree(model.Id, model.deerFamily);
 
-            Ranch? ranch = _deerRepo.GetRanch(deer.RanchId);        
+            //Ranch? ranch = _deerRepo.GetRanch(deer.RanchId);        
 
-            string fullName = deer.Ranch.OwnerFirstName + " " + deer.Ranch.OwnerlastName;
+            //string fullName = deer.Ranch.OwnerFirstName + " " + deer.Ranch.OwnerlastName;
+            //string loginLink = _configuration["CurrentHost"] + "login";
+
+            //if (ranch != null)
+            //{
+            //    bool emailStatus = _emailService.SendEmail(
+            //                       ranch.Email,
+            //                       EmailConstants.DeerSubmissionSubject,
+            //                       string.Format(EmailConstants.DeerSubmissionBody, fullName, deer.Name, loginLink),
+            //                       null
+            //    );
+            //}
+            return deer.Id.ToString();
+        }
+
+        public void SendAddDeerEmail(DeerModel[] deerList)
+        {
+            Ranch? ranch = _deerRepo.GetRanch(deerList[0].RanchId);
+            string fullName = ranch!.OwnerFirstName + " " + ranch!.OwnerlastName;
             string loginLink = _configuration["CurrentHost"] + "login";
 
+            string deerCSV = "";
+
+            foreach (DeerModel deer in deerList)
+            {
+                deerCSV = deerCSV + deer.Name + ",";
+            }
+            
             if (ranch != null)
             {
                 bool emailStatus = _emailService.SendEmail(
                                    ranch.Email,
                                    EmailConstants.DeerSubmissionSubject,
-                                   string.Format(EmailConstants.DeerSubmissionBody, fullName, deer.Name, loginLink),
+                                   string.Format(EmailConstants.DeerSubmissionBody, fullName, deerCSV, loginLink),
                                    null
                 );
             }
-            return deer.Id.ToString();
         }
 
         public DeerFamilyModel MapDeerFamily(Deer deer)

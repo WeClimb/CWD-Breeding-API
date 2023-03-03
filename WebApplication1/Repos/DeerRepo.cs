@@ -75,8 +75,10 @@ namespace ReviewPlatformAPI.Repos
             return _reviewPlatformDBContext.Media.Where(media => media.DeerId == deerId).ToList();
         }
 
-        public List<Deer> GetAllFiltered(bool isApproved,string? deerName, string? ranchName, string? codon, decimal? gebv,int? age,int? sciScore)
+        public List<Deer> GetAllFiltered(bool isApproved,string? deerName, string? ranchName, string? codon, decimal? gebv,int? age,int? sciScore, int? page)
         {
+            int pageSize = 10; // Set the page size to 20 for example purposes, can be changed to any value;
+
             IQueryable<Deer> query = LoadDbSet().Where(deer => deer.IsApproved == isApproved)
                                           .Where(deer => deer.IsPaid == true)
                                           .Where(deer => deer.Name.Contains(deerName))
@@ -96,6 +98,11 @@ namespace ReviewPlatformAPI.Repos
             if(sciScore != null)
             {
                 query = query.Where(deer => deer.SciScore >= sciScore);
+            }
+
+            if (page != null)
+            {
+                query = query.Skip(pageSize * ((int)page - 1)).Take(pageSize);
             }
 
             return query.Include(deer => deer.Ranch)

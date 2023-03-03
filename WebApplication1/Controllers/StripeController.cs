@@ -63,89 +63,63 @@ namespace ReviewPlatformAPI.Controllers
             }
         }
 
-        //[AllowAnonymous]
-        //[HttpPost]
-        //[Route("webhook")]
-        //public async Task<IActionResult> Webhook()
-        //{
-        //    var json = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
-        //    Event stripeEvent;
-        //    try
-        //    {
-        //        var webhookSecret = _configuration["WebhookKey"];
-        //        stripeEvent = EventUtility.ConstructEvent(
-        //    json,
-        //    Request.Headers["Stripe-Signature"],
-        //    webhookSecret
-        //);
-        //        Console.WriteLine($"Webhook notification with type: {stripeEvent.Type} found for {stripeEvent.Id}");
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        Console.WriteLine($"Something failed {e}");
-        //        return BadRequest();
-        //    }
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("webhook")]
+        public async Task<IActionResult> Webhook()
+        {
+            var json = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
+            Event stripeEvent;
+            try
+            {
+                var webhookSecret = _configuration["WebhookKey"];
+                stripeEvent = EventUtility.ConstructEvent(
+            json,
+            Request.Headers["Stripe-Signature"],
+            webhookSecret
+        );
+                Console.WriteLine($"Webhook notification with type: {stripeEvent.Type} found for {stripeEvent.Id}");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Something failed {e}");
+                return BadRequest();
+            }
 
-        //    switch (stripeEvent.Type)
-        //    {
-        //        case "checkout.session.completed":
-        //            // Payment is successful and the subscription is created.
-        //            // You should provision the subscription and save the customer ID to your database.
-        //            try
-        //            {
-        //                return Ok(_stripeService.CheckoutCompletedHandler(stripeEvent));
-        //            }
-        //            catch
-        //            {
-        //                return BadRequest("Handler Failed");
-        //            }
-        //        case "invoice.paid":
-        //            // Continue to provision the subscription as payments continue to be made.
-        //            // Store the status in your database and check when a user accesses your service.
-        //            // This approach helps you avoid hitting rate limits.
-        //            try
-        //            {
-        //                return Ok(_stripeService.InvoicePaidHandler(stripeEvent));
-        //            }
-        //            catch
-        //            {
-        //                return BadRequest("Handler Failed");
-        //            }
-        //        case "invoice.payment_failed":
-        //            try
-        //            {
-        //                return Ok(_stripeService.InvoicePaymentFailedHandler(stripeEvent));
-        //            }
-        //            catch
-        //            {
-        //                return BadRequest("Handler Failed");
-        //            }
-        //        case "customer.subscription.deleted":
-        //            {
-        //                try
-        //                {
-        //                    return Ok(_stripeService.CanceledSubscriptionHandler(stripeEvent));
-        //                }
-        //                catch
-        //                {
-        //                    return BadRequest("Handler Failed");
-        //                }
-        //            }
-        //        case "invoice.created":
-        //            {
-        //                try
-        //                {
-        //                    return Ok(_stripeService.InvoiceHandler(stripeEvent));
-        //                }
-        //                catch
-        //                {
-        //                    return BadRequest("Handler Failed");
-        //                }
-        //            }
-        //        default: return Ok("No Webhook Handler");
-        //    }
+            switch (stripeEvent.Type)
+            {
+                case "checkout.session.completed":         
+                    try
+                    {
+                        return Ok(_stripeService.CheckoutCompletedHandler(stripeEvent));
+                    }
+                    catch
+                    {
+                        return BadRequest("Handler Failed");
+                    }
+                case "invoice.paid":
+                    try
+                    {
+                        return Ok(_stripeService.InvoicePaidHandler(stripeEvent));
+                    }
+                    catch
+                    {
+                        return BadRequest("Handler Failed");
+                    }
+                case "invoice.payment_failed":
+                    try
+                    {
+                        return Ok(_stripeService.InvoicePaymentFailedHandler(stripeEvent));
+                    }
+                    catch
+                    {
+                        return BadRequest("Handler Failed");
+                    }
+                default: return Ok("No Webhook Handler");
+            }
 
-            
+
         }
     }
+}
 

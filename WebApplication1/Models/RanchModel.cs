@@ -22,6 +22,7 @@ namespace ReviewPlatformAPI.Models
         public string? PhoneNumber { get; set; }
         public string? Email { get; set; }
         public Guid? LoginDataId { get; set; }
+        public string? StripeId { get;  set; }
 
         public virtual LoginDataModel? LoginData { get; set; }
         public virtual ICollection<ChangePasswordModel> ChangePasswords { get; set; }

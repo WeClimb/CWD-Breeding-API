@@ -45,6 +45,21 @@ namespace ReviewPlatformAPI.Controllers
             }
         }
 
+        [HttpPost]
+        [Route("Send-Email")]
+        public IActionResult SendListingRequestEmail([FromBody] DeerModel[] model)
+        {
+            try
+            {
+                _deerService.SendAddDeerEmail(model);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+        }
+
         [AllowAnonymous]
         [HttpGet("{id:Guid}")]
         public IActionResult GetById(Guid id)
@@ -109,9 +124,9 @@ namespace ReviewPlatformAPI.Controllers
         [AllowAnonymous]
         [HttpGet]
         [Route("All-Filtered")]
-        public List<DeerModel> GetAllFiltered(string? deerName = "", string? ranchName = "", string? codon = "", decimal? gebv = null, int? age = null, int? sciScore = null, bool isApproved = false)
+        public List<DeerModel> GetAllFiltered(int? page = 0, string? deerName = "", string? ranchName = "", string? codon = "", decimal? gebv = null, int? age = null, int? sciScore = null, bool isApproved = false)
         {
-            return _deerService.GetAllFiltered(isApproved, deerName, ranchName, codon, gebv, age, sciScore);
+            return _deerService.GetAllFiltered(isApproved, deerName, ranchName, codon, gebv, age, sciScore, page);
         }
 
 

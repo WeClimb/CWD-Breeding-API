@@ -12,11 +12,13 @@ namespace ReviewPlatformAPI.Services
     {
         private readonly IConfiguration _configuration;
         private readonly RanchRepo _ranchRepo;
+        private readonly DeerRepo _deerRepo;
 
-        public StripeService(IConfiguration configuration, RanchRepo ranchRepo)
+        public StripeService(IConfiguration configuration, RanchRepo ranchRepo, DeerRepo deerRepo)
         {
             _configuration = configuration;
             _ranchRepo = ranchRepo;
+            _deerRepo = deerRepo;
         }
 
         //Create-Checkout-Session
@@ -41,9 +43,13 @@ namespace ReviewPlatformAPI.Services
                         SessionLineItemOptions lineItem = new SessionLineItemOptions();
                         lineItem.Quantity = 1;
 
+                        Dictionary<string, string> metaData = new Dictionary<string, string>();
+                        metaData.Add("DeerId", deer.DeerId);
+
                         ProductCreateOptions productOptions = new ProductCreateOptions
                         {
                             Name = deer.DeerName,
+                            Metadata = metaData,
                         };
 
                         productOptions.DefaultPriceData = new ProductDefaultPriceDataOptions();
@@ -99,190 +105,129 @@ namespace ReviewPlatformAPI.Services
             }
         }
 
+        public object? InvoicePaymentFailedHandler(Event stripeEvent)
+        {
+            //Mark Deer as unpaid at end of current subscription, alert user
+            //Mark Deer as Paid, alert user
+            var invoice = stripeEvent.Data.Object as Invoice;
 
+            if (invoice == null)
+            {
+                throw new Exception("Invoice Not Found");
+            }
+            else
+            {
+                foreach (var lineItem in invoice.Lines.Data)
+                {
+                    var deerId = lineItem.Metadata["deerId"];
+                    Deer? deer = _deerRepo.LoadByPrimaryKey(Guid.Parse(deerId));
 
-        //public bool CancelStripeSubAtEndOfBillingCycleByProviderId(string id)
-        //{
-        //    string? subId = "";
+                    if (deer == null)
+                    {
+                        throw new Exception("Deer Not Found");
+                    }
+                    else
+                    {
+                        deer.IsPaid = false;
+                        _deerRepo.Update(deer);
+                    }
+                }
+            }
 
-        //    if (!string.IsNullOrEmpty(id))
-        //    {
-        //        ServiceProvider provider = _serviceProviderRepo.GetByNoTrackingId(Guid.Parse(id));
-        //        if (provider.SubData != null)
-        //        {
-        //            subId = provider.SubData.StripeSubId;
-        //        }
+            return "Failed to pay invoice";
+        }
 
-        //        if (!string.IsNullOrEmpty(subId))
-        //        {
-        //            CancelStripeSubAtEndOfBillingCycle(subId);
-        //            return true;
-        //        }
-        //    }
+        internal object? CanceledSubscriptionHandler(Event stripeEvent)
+        {
+            throw new NotImplementedException();
+        }
 
-        //    return false;
-        //}
+        public object? InvoicePaidHandler(Event stripeEvent)
+        {
+            //Mark Deer as Paid, alert user
+            var invoice = stripeEvent.Data.Object as Invoice;
 
-        //public object? CheckoutCompletedHandler(Event stripeEvent)
-        //{
-        //    Session? checkoutSession = stripeEvent.Data.Object as Session;
+            if (invoice == null)
+            {
+                throw new Exception("Invoice Not Found");
+            } 
+            else
+            {
+                foreach (var lineItem in invoice.Lines.Data)
+                {
+                    var deerId = lineItem.Metadata["deerId"];
+                    Deer? deer = _deerRepo.LoadByPrimaryKey(Guid.Parse(deerId));
 
-        //    if(checkoutSession == null)
-        //    {
-        //        throw new Exception("Session Not Found");
-        //    } 
-        //    else
-        //    {
-        //        ServiceProvider provider = _serviceProviderRepo.GetServiceProviderByEmail(checkoutSession.CustomerEmail);
-        //        provider.SubData.StripeSubId = checkoutSession.SubscriptionId;
-        //        provider.SubData.StripeId = checkoutSession.CustomerId;
-        //        provider.SubData.IsPaid = true;
-        //        _serviceProviderRepo.Update(provider);
-        //        SubDataModel subDataModel = _subDataService.CreateModelForIndividualLookup(provider.SubData);
-        //        _subDataService.Update(provider.SubData.Id, subDataModel);
-        //    }
+                    if (deer == null)
+                    {
+                        throw new Exception("Deer Not Found");
+                    }
+                    else
+                    {
+                        deer.IsPaid = true;
+                        _deerRepo.Update(deer);
+                    }
+                }
+            }
 
-        //    return "Success";
-        //}
+            return "Success";
+        }
 
-        //public object? InvoicePaidHandler(Event stripeEvent)
-        //{
-        //    Invoice? invoice = stripeEvent.Data.Object as Invoice;
+        public object? CheckoutCompletedHandler(Event stripeEvent)
+        {
+            //Mark Deer as paid
+            Session? checkoutSession = stripeEvent.Data.Object as Session;
 
-        //    if (invoice == null)
-        //    {
-        //        throw new Exception("Session Not Found");
-        //    }
-        //    else
-        //    {
-        //        ServiceProvider provider = _serviceProviderRepo.GetServiceProviderByEmail(invoice.CustomerEmail);
-        //        provider.SubData.StripeId = invoice.CustomerId;
-        //        provider.SubData.IsPaid = invoice.Paid;
-        //        _serviceProviderRepo.Update(provider);
-        //        SubDataModel subDataModel = _subDataService.CreateModelForIndividualLookup(provider.SubData);
-        //        _subDataService.Update(provider.SubData.Id, subDataModel);
-        //    }
+            if (checkoutSession == null)
+            {
+                throw new Exception("Session Not Found");
+            }
+            else
+            {
+                Ranch ranch = _ranchRepo.GetRanchByEmail(checkoutSession.CustomerEmail);
+                ranch.StripeId = checkoutSession.CustomerId;
+                _ranchRepo.Update(ranch);
 
-        //    return "Success";
-        //}
+                var service = new SessionService();
+                
+                var options = new SessionListLineItemsOptions
+                {
+                    Limit = 100,
+                    Expand = new List<string> { "data.price.product" }
+                };
+                
+                StripeList<LineItem> lineItems = service.ListLineItems(checkoutSession.Id, options);
 
-        //public object? InvoicePaymentFailedHandler(Event stripeEvent)
-        //{
-        //    Invoice? invoice = stripeEvent.Data.Object as Invoice;
+                //mark each deer as paid
+                foreach (LineItem item in lineItems.Data)
+                {
 
-        //    if (invoice == null)
-        //    {
-        //        throw new Exception("Session Not Found");
-        //    }
-        //    else
-        //    {
-        //        ServiceProvider provider = _serviceProviderRepo.GetServiceProviderByEmail(invoice.CustomerEmail);
-        //        provider.SubData.StripeId = invoice.CustomerId;
-        //        provider.SubData.IsPaid = false;
-        //        _serviceProviderRepo.Update(provider);
-        //        SubDataModel subDataModel = _subDataService.CreateModelForIndividualLookup(provider.SubData);
-        //        _subDataService.Update(provider.SubData.Id, subDataModel);
-        //    }
+                    string? deerId = item.Price.Product.Metadata["DeerId"];
 
-        //    return "Success";
-        //}
+                    if (deerId != null)
+                    {
+                        Guid deerGuid = Guid.Parse(deerId);
+                        Deer? deer = _deerRepo.LoadByPrimaryKey(deerGuid);
+                        if (deer == null)
+                        {
+                            throw new Exception("Deer Not Found");
+                        }
+                        else
+                        {
+                            deer.IsPaid = true;
+                            _deerRepo.Update(deer);
+                        }
+                    }
+                }
 
-        //public object? CanceledSubscriptionHandler(Event stripeEvent)
-        //{
-        //    Subscription? subscription = stripeEvent.Data.Object as Subscription;
+            }
 
-        //    if (subscription == null)
-        //    {
-        //        throw new Exception("Session Not Found");
-        //    }
-        //    else
-        //    {
-        //        ServiceProvider provider = _serviceProviderRepo.GetProvideByStripeId(subscription.CustomerId);
-        //        provider.SubData.StripeId = subscription.CustomerId;
-        //        provider.SubData.IsPaid = false;
-        //        _serviceProviderRepo.Update(provider);
-        //        SubDataModel subDataModel = _subDataService.CreateModelForIndividualLookup(provider.SubData);
-        //        _subDataService.Update(provider.SubData.Id, subDataModel);
-        //    }
+            return "Success";
+        }
 
-        //    return "Success";
-        //}
-
-        //public object? InvoiceHandler(Event stripeEvent)
-        //{
-        //    Invoice? invoice = stripeEvent.Data.Object as Invoice;
-
-        //    if (invoice == null)
-        //    {
-        //        throw new Exception("Session Not Found");
-        //    }
-        //    else if(!invoice.Paid)
-        //    {
-        //        ServiceProvider provider = _serviceProviderRepo.GetServiceProviderByEmail(invoice.CustomerEmail);
-        //        provider.SubData.StripeId = invoice.CustomerId;
-        //        provider.SubData.StripeSubId = invoice.SubscriptionId;
-        //        provider.SubData.IsPaid = false;
-        //        _serviceProviderRepo.Update(provider);
-        //        SubDataModel subDataModel = _subDataService.CreateModelForIndividualLookup(provider.SubData);
-        //        _subDataService.Update(provider.SubData.Id, subDataModel);
-        //    }
-
-        //    return "Success";
-        //}
-
-        //public void CancelStripeSubNow(string stripeSubId)
-        //{
-        //    StripeConfiguration.ApiKey = _configuration["StripeAPIKey"];
-
-        //    try
-        //    {
-        //        var service = new SubscriptionService();
-        //        var options = new SubscriptionUpdateOptions
-        //        {
-        //            CancelAtPeriodEnd = false,
-        //        };
-        //        Subscription subscription = service.Get(stripeSubId);
-
-        //        if(subscription.Status != "canceled" && subscription.Status != "incomplete_expired")
-        //        {
-        //            subscription = service.Update(stripeSubId, options);
-        //        }
-        //    }
-        //    catch
-        //    {
-        //        throw new Exception("Sub failed to cancel");
-        //    }
-
-        //}
-
-        //public void CancelStripeSubAtEndOfBillingCycle(string stripeSubId)
-        //{
-        //    StripeConfiguration.ApiKey = _configuration["StripeAPIKey"];
-
-        //    try
-        //    {
-        //        var service = new SubscriptionService();
-        //        var options = new SubscriptionUpdateOptions
-        //        {
-        //            CancelAtPeriodEnd = true,
-        //        };
-        //        Subscription subscription = service.Update(stripeSubId, options);
-        //    }
-        //    catch
-        //    {
-        //        throw new Exception("Sub failed to cancel");
-        //    }
-        //}
-
-        //public void DeleteStipeCustomer(string customerId)
-        //{
-        //    var service = new CustomerService();
-        //    var customer = service.Get(customerId);
-
-        //    if (customer.Deleted == false)
-        //    {
-        //        service.Delete(customerId);
-        //    }
-        //}
+        internal object? InvoiceCreatedHandler(Event stripeEvent)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

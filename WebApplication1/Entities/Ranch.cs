@@ -26,5 +26,6 @@ namespace ReviewPlatformAPI.Entities
         public virtual LoginData? LoginData { get; set; }
         public virtual ICollection<ChangePassword> ChangePasswords { get; set; }
         public virtual ICollection<Deer> Deer { get; set; }
+        public string? StripeId { get; internal set; }
     }
 }
