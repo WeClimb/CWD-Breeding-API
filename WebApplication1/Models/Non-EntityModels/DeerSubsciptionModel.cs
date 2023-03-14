@@ -6,5 +6,6 @@
         public string? RanchId { get; set; }
         public string? DeerName { get; set; }
         public string? StripePriceId { get; set; }
+        public string? PromoCodeId { get; set; }
     }
 }

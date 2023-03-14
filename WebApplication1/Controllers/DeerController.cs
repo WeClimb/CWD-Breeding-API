@@ -1,4 +1,5 @@
-﻿using CWDBreedingAPI.Models.Non_EntityModels;
+﻿using CWDBreedingAPI.Entities;
+using CWDBreedingAPI.Models.Non_EntityModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ReviewPlatformAPI.Entities;
@@ -80,6 +81,8 @@ namespace ReviewPlatformAPI.Controllers
         {
             return Update(id, model);
         }
+
+        
 
         [Route("Denied")]
         [HttpPut]

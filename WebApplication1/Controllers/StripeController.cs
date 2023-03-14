@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using CWDBreedingAPI.Entities;
 using CWDBreedingAPI.Models.Non_EntityModels;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
@@ -117,8 +118,13 @@ namespace ReviewPlatformAPI.Controllers
                     }
                 default: return Ok("No Webhook Handler");
             }
+        }
 
-
+        [HttpGet("Check-Promo")]
+        public IActionResult GetPromo([FromQuery] string? promoCode = null)
+        {
+            PromoCode? promo = _stripeService.GetPromoCode(promoCode);
+            return Ok(promo);
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿using CWDBreedingAPI.Models.Non_EntityModels;
+﻿using CWDBreedingAPI.Entities;
+using CWDBreedingAPI.Models.Non_EntityModels;
+using CWDBreedingAPI.Repos;
 using ReviewPlatformAPI.Entities;
 using ReviewPlatformAPI.Models;
 using ReviewPlatformAPI.Models.Non_EntityModels;
@@ -13,12 +15,16 @@ namespace ReviewPlatformAPI.Services
         private readonly IConfiguration _configuration;
         private readonly RanchRepo _ranchRepo;
         private readonly DeerRepo _deerRepo;
+        private readonly PromoCodeRepository _promoCodeRepository;
 
-        public StripeService(IConfiguration configuration, RanchRepo ranchRepo, DeerRepo deerRepo)
+        public StripeService(IConfiguration configuration, RanchRepo ranchRepo, DeerRepo deerRepo, PromoCodeRepository repository)
         {
             _configuration = configuration;
             _ranchRepo = ranchRepo;
             _deerRepo = deerRepo;
+            _promoCodeRepository = repository;
+
+
         }
 
         //Create-Checkout-Session
@@ -135,6 +141,11 @@ namespace ReviewPlatformAPI.Services
             }
 
             return "Failed to pay invoice";
+        }
+
+        public PromoCode? GetPromoCode(string? promoCode)
+        {
+            return _promoCodeRepository.GetPromoCode(promoCode);
         }
 
         internal object? CanceledSubscriptionHandler(Event stripeEvent)

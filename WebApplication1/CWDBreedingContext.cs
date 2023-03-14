@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using CWDBreedingAPI.Entities;
+using Microsoft.EntityFrameworkCore;
 using ReviewPlatformAPI.Entities;
 
 namespace ReviewPlatformAPI
@@ -23,6 +24,7 @@ namespace ReviewPlatformAPI
         public virtual DbSet<Media> Media { get; set; } = null!;
         public virtual DbSet<Ranch> Ranches { get; set; } = null!;
         public virtual DbSet<User> Users { get; set; } = null!;
+        public virtual DbSet<PromoCode> PromoCodes { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
