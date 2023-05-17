@@ -120,7 +120,9 @@ namespace ReviewPlatformAPI.Controllers
             }
         }
 
-        [HttpGet("Check-Promo")]
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("Check-Promo")]
         public IActionResult GetPromo([FromQuery] string? promoCode = null)
         {
             PromoCode? promo = _stripeService.GetPromoCode(promoCode);

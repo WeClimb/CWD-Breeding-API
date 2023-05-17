@@ -22,8 +22,13 @@ namespace CWDBreedingAPI.Repos
             } 
             else
             {
-                return _context.PromoCodes.FirstOrDefault(p => p.Code == promoCode) ?? null;
-
+                PromoCode? promo = _context.PromoCodes.FirstOrDefault(p => p.Code == promoCode) ?? null;
+                if(promo != null)
+                {
+                    promo.Uses++;
+                    _context.SaveChanges();
+                }
+                return promo;
             }
         }
     }

@@ -89,7 +89,11 @@ namespace ReviewPlatformAPI.Services
             entity.AgeOfBuckDisplayed = model.AgeOfBuckDisplayed;
             entity.Description = model.Description;
             entity.IsPaid = model.IsPaid;
-            entity.PaidDate = model.PaidDate;
+
+            if(entity.PaidDate != null)
+            {
+                entity.PaidDate = model.PaidDate;
+            }
         }
 
         public override DeerModel CreateModelForIndividualLookup(Deer entity)

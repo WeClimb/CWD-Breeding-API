@@ -8,6 +8,8 @@ using ReviewPlatformAPI.Utils;
 using Microsoft.IdentityModel.Logging;
 using Serilog;
 using CWDBreedingAPI.Utils;
+using CWDBreedingAPI.Services;
+using CWDBreedingAPI.Repos;
 
 namespace ReviewPlatformAPI
 {
@@ -55,6 +57,10 @@ namespace ReviewPlatformAPI
 
             services.AddScoped<ChangePasswordRepo, ChangePasswordRepo>();
             services.AddScoped<ChangePasswordService, ChangePasswordService>();
+
+            services.AddScoped<PromoCodeService, PromoCodeService>();
+            services.AddScoped<PromoCodeRepository, PromoCodeRepository>();
+
 
             services.AddScoped<DeerRepo, DeerRepo>();
             services.AddScoped<DeerService, DeerService>();

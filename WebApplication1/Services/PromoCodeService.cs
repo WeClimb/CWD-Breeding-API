@@ -12,10 +12,10 @@
         {
             _repository = repository;
         }
-
-        public PromoCode? GetPromoCodeById(Guid id)
+        
+        public PromoCode? GetPromoCodeById(string id)
         {
-            return _repository.GetPromoCodeById(id);
+            return _repository.GetPromoCode(id);
         }
     }
 }

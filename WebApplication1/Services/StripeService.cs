@@ -39,18 +39,25 @@ namespace ReviewPlatformAPI.Services
                     Guid ranchId = Guid.Parse(deerToPayFor[0].RanchId);
 
                     Ranch ranch = _ranchRepo.GetByNoTrackingId(ranchId);
-
+                    
                     var domain = _configuration["CurrentHost"];
 
                     List<SessionLineItemOptions> lineItems = new List<SessionLineItemOptions>();
 
                     foreach (DeerSubsciptionModel deer in deerToPayFor)
                     {
+                        //Get promo code based off of code id in deer
+                        PromoCode? promoCode = _promoCodeRepository.GetPromoCode(deer.PromoCodeId);
+
                         SessionLineItemOptions lineItem = new SessionLineItemOptions();
                         lineItem.Quantity = 1;
 
                         Dictionary<string, string> metaData = new Dictionary<string, string>();
                         metaData.Add("DeerId", deer.DeerId);
+                        metaData.Add("RanchId", deer.RanchId);
+                        if(promoCode != null) {
+                            metaData.Add("PromoCode", promoCode?.Code ?? "");
+                        }
 
                         ProductCreateOptions productOptions = new ProductCreateOptions
                         {
@@ -63,6 +70,14 @@ namespace ReviewPlatformAPI.Services
                         productOptions.DefaultPriceData.Currency = "usd";
 
                         long price = long.Parse(_configuration["DeerCost"]);
+
+                        if (promoCode != null)
+                        {
+                            decimal discountAmount = price * (promoCode.PercentageOff / 100);
+                            decimal discountedPrice = price - discountAmount;
+                            price = (long)discountedPrice;
+                        }
+                        
                         productOptions.DefaultPriceData.UnitAmountDecimal = price * 100;
                         
                         productOptions.DefaultPriceData.Recurring = new ProductDefaultPriceDataRecurringOptions();
@@ -166,7 +181,13 @@ namespace ReviewPlatformAPI.Services
             {
                 foreach (var lineItem in invoice.Lines.Data)
                 {
-                    var deerId = lineItem.Metadata["deerId"];
+                    var priceService = new PriceService();
+                    var price = priceService.Get(lineItem.Price.Id);
+
+                    var productServuce = new ProductService();
+                    var product = productServuce.Get(price.ProductId);
+
+                    string deerId = product.Metadata["DeerId"];
                     Deer? deer = _deerRepo.LoadByPrimaryKey(Guid.Parse(deerId));
 
                     if (deer == null)
@@ -178,10 +199,10 @@ namespace ReviewPlatformAPI.Services
                         deer.IsPaid = true;
                         _deerRepo.Update(deer);
                     }
-                }
-            }
 
-            return "Success";
+                 }
+                return "Success";
+            }
         }
 
         public object? CheckoutCompletedHandler(Event stripeEvent)

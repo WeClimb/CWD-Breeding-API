@@ -36,6 +36,7 @@ C:\Users\WeCli\Repos\CWDBreeding\CWD-Breeding-API\WebApplication1\obj\Release\ne
 C:\Users\WeCli\Repos\CWDBreeding\CWD-Breeding-API\WebApplication1\obj\Release\net6.0\PubTmp\Out\Microsoft.Win32.SystemEvents.dll
 C:\Users\WeCli\Repos\CWDBreeding\CWD-Breeding-API\WebApplication1\obj\Release\net6.0\PubTmp\Out\Newtonsoft.Json.dll
 C:\Users\WeCli\Repos\CWDBreeding\CWD-Breeding-API\WebApplication1\obj\Release\net6.0\PubTmp\Out\Newtonsoft.Json.Bson.dll
+C:\Users\WeCli\Repos\CWDBreeding\CWD-Breeding-API\WebApplication1\obj\Release\net6.0\PubTmp\Out\RestSharp.dll
 C:\Users\WeCli\Repos\CWDBreeding\CWD-Breeding-API\WebApplication1\obj\Release\net6.0\PubTmp\Out\SendGrid.dll
 C:\Users\WeCli\Repos\CWDBreeding\CWD-Breeding-API\WebApplication1\obj\Release\net6.0\PubTmp\Out\Serilog.dll
 C:\Users\WeCli\Repos\CWDBreeding\CWD-Breeding-API\WebApplication1\obj\Release\net6.0\PubTmp\Out\Serilog.AspNetCore.dll
@@ -47,6 +48,7 @@ C:\Users\WeCli\Repos\CWDBreeding\CWD-Breeding-API\WebApplication1\obj\Release\ne
 C:\Users\WeCli\Repos\CWDBreeding\CWD-Breeding-API\WebApplication1\obj\Release\net6.0\PubTmp\Out\Serilog.Sinks.Debug.dll
 C:\Users\WeCli\Repos\CWDBreeding\CWD-Breeding-API\WebApplication1\obj\Release\net6.0\PubTmp\Out\Serilog.Sinks.File.dll
 C:\Users\WeCli\Repos\CWDBreeding\CWD-Breeding-API\WebApplication1\obj\Release\net6.0\PubTmp\Out\StarkbankEcdsa.dll
+C:\Users\WeCli\Repos\CWDBreeding\CWD-Breeding-API\WebApplication1\obj\Release\net6.0\PubTmp\Out\Stripe.dll
 C:\Users\WeCli\Repos\CWDBreeding\CWD-Breeding-API\WebApplication1\obj\Release\net6.0\PubTmp\Out\Stripe.net.dll
 C:\Users\WeCli\Repos\CWDBreeding\CWD-Breeding-API\WebApplication1\obj\Release\net6.0\PubTmp\Out\Swashbuckle.AspNetCore.Swagger.dll
 C:\Users\WeCli\Repos\CWDBreeding\CWD-Breeding-API\WebApplication1\obj\Release\net6.0\PubTmp\Out\Swashbuckle.AspNetCore.SwaggerGen.dll
