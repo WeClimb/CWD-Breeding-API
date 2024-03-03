@@ -77,13 +77,21 @@ namespace ReviewPlatformAPI.Controllers
         }
 
         [HttpPut("{id:Guid}")]
-        public IActionResult UpdateDeer(Guid id, DeerModel model)
+        [HttpPut("{deerId}/Pedigree")]
+        public IActionResult UpdatePedigree(Guid deerId, [FromBody] DeerFamilyModel deerFamily)
         {
-            return Update(id, model);
+            bool request = _deerService.UpdateDeerFamily(deerId, deerFamily);
+
+            if(request)
+            {
+                return Ok();
+            } 
+            else
+            {
+                return BadRequest();
+            }
         }
-
-        
-
+ 
         [Route("Denied")]
         [HttpPut]
         public IActionResult DenyDeerRequest(DeerModel model)
@@ -127,9 +135,9 @@ namespace ReviewPlatformAPI.Controllers
         [AllowAnonymous]
         [HttpGet]
         [Route("All-Filtered")]
-        public List<DeerModel> GetAllFiltered(int? page = 0, string? deerName = "", string? ranchName = "", string? codon = "", decimal? gebv = null, int? age = null, int? sciScore = null, bool isApproved = false)
+        public List<DeerModel> GetAllFiltered(int? page = 0, string? deerName = "", string? ranchName = "", string? codon = "", decimal? gebv = null, int? age = null, int? sciScore = null, string? ranchId = "" ,bool isApproved = false)
         {
-            return _deerService.GetAllFiltered(isApproved, deerName, ranchName, codon, gebv, age, sciScore, page);
+            return _deerService.GetAllFiltered(isApproved, deerName, ranchName, codon, gebv, age, sciScore, page, ranchId);
         }
 
 

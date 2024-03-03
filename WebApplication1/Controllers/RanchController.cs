@@ -97,12 +97,40 @@ namespace ReviewPlatformAPI.Controllers
             }
         }
 
+        [HttpPost]
+        [Route("Admin-Change-Password")]
+        public IActionResult AdminChangePassword(PasswordRequestModel passwordRequestModel)
+        {
+            if (string.IsNullOrEmpty(passwordRequestModel.password))
+            {
+                throw new Exception("Password is required.");
+            }
+
+            try
+            {
+                _ranchService.ChangePassword(new Guid(passwordRequestModel.changePasswordId), passwordRequestModel.password);
+                return Ok(new { message = "Success!" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
         [AllowAnonymous]
         [HttpPost]
         public IActionResult CreateRanch(RanchModel model)
         {
             return Create(model);
         }
+
+        [HttpPost]
+        [Route("Admin-Create")]
+        public IActionResult AdminCreateRanch(RanchModel model)
+        {
+            return Ok(_ranchService.AdminCreate(model));
+        }
+
 
         [HttpGet("{id:Guid}")]
         public IActionResult GetById(Guid id)
@@ -116,11 +144,12 @@ namespace ReviewPlatformAPI.Controllers
             return Update(id, model);
         }
 
-        //[HttpGet]
-        //[Route("All")]
-        //public List<RanchModel> All(string? firstName, string? lastName, string? city, string? state)
-        //{
-        //    return _ranchService.GetA(firstName,lastName,city,state);
-        //}
+        [HttpGet]
+        [Route("getByFilters")]
+        public IActionResult GetByFilters(string? name, string? ownerFirstName, string? ownerLastName)
+        {
+            var ranches = _ranchService.GetRanchesByName(name, ownerFirstName, ownerLastName);
+            return Ok(ranches);
+        }
     }
 }

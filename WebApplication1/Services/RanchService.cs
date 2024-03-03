@@ -8,6 +8,7 @@ using System.Security.Claims;
 using ReviewPlatformAPI.Utils;
 using ReviewPlatformAPI.Constants;
 using System.Text.RegularExpressions;
+using CWDBreedingAPI.Models.Non_EntityModels;
 
 namespace ReviewPlatformAPI.Services
 {
@@ -94,6 +95,10 @@ namespace ReviewPlatformAPI.Services
 
         public override void CopyDataForUpdate(Ranch entity, RanchModel model)
         {
+            if(model.Name != null && model.Name.Length != 0)
+            {
+                entity.Name = model.Name;
+            }
             if (model.Website != null && model.Website.Length != 0)
             {
                 entity.Website = model.Website;
@@ -133,6 +138,114 @@ namespace ReviewPlatformAPI.Services
 
             entity.Status = model.Status ?? entity.Status;
             entity.UpdateDate = DateTime.Now;
+        }
+
+        public AdminRanchCreateModel AdminCreate(RanchModel model)
+        {
+            if (model == null)
+            {
+                throw new ArgumentNullException(nameof(model));
+            }
+
+            if (!ranchValidation(model))
+            {
+                throw new Exception("Failed to create: Invalid Ranch data.");
+            }
+
+            Ranch? ranch = _ranchRepo.CheckIfEmailExists(model.Email);
+
+            if (ranch != null)
+            {
+                throw new Exception("Failed to create: Ranch already exists with this email.");
+            }
+            Ranch entity = ConverToEntityForAdd(model);
+            
+            LoginDataModel loginData = new LoginDataModel();
+            entity.LoginDataId = _loginDataService.Create(loginData);
+            
+            Guid? ranchId =  this._ranchRepo.Create(entity);
+
+            AdminRanchCreateModel adminRanchCreate = new AdminRanchCreateModel();
+
+            adminRanchCreate.RanchId = ranchId;
+
+            if (ranchId != null)
+            {
+                ChangePasswordModel changePasswordModel = new ChangePasswordModel();
+                changePasswordModel.RanchId = adminRanchCreate.RanchId;
+
+                adminRanchCreate.ChangePasswordId = _changePasswordService.Create(changePasswordModel);
+
+                if (adminRanchCreate.ChangePasswordId == null)
+                {
+                    throw new Exception("Failed Create");
+                }
+
+                return adminRanchCreate;
+            }
+
+            throw new Exception("Failed");
+        }
+
+
+        private bool ranchValidation(RanchModel ranch)
+        {
+            if (ranch == null)
+            {
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(ranch.Name))
+            {
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(ranch.OwnerFirstName))
+            {
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(ranch.OwnerlastName))
+            {
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(ranch.Website))
+            {
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(ranch.Email))
+            {
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(ranch.Address))
+            {
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(ranch.City))
+            {
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(ranch.State))
+            {
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(ranch.Zipcode))
+            {
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(ranch.PhoneNumber))
+            {
+                return false;
+            }
+
+            return true;
         }
 
         public override RanchModel CreateModelForIndividualLookup(Ranch entity)
@@ -286,6 +399,19 @@ namespace ReviewPlatformAPI.Services
             return emailStatus;
         }
 
+        public List<RanchModel> GetRanchesByName(string? name, string? ownerFirstName, string? ownerLastName)
+        {
+            var ranches = _ranchRepo.GetRanchesByName(name, ownerFirstName, ownerLastName);
+            var ranchModels = new List<RanchModel>();
+
+            foreach (var ranch in ranches)
+            {
+                var ranchModel = CreateModelForListLookup(ranch);
+                ranchModels.Add(ranchModel);
+            }
+
+            return ranchModels;
+        }
 
         public override BaseRepo<Ranch> LoadRepo()
         {

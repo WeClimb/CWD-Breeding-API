@@ -45,5 +45,28 @@ namespace ReviewPlatformAPI.Repos
         {
             return _reviewPlatformDBContext.Ranches.FirstOrDefault(client => client.Email == email) ?? throw new Exception("TODO: ERROR");
         }
+
+        public List<Ranch> GetRanchesByName(string? name, string? ownerFirstName, string? ownerLastName)
+        {
+            var query = _reviewPlatformDBContext.Ranches.AsQueryable();
+
+            if (!string.IsNullOrEmpty(name))
+            {
+                query = query.Where(ranch => ranch.Name.Contains(name));
+            }
+
+            if (!string.IsNullOrEmpty(ownerFirstName))
+            {
+                query = query.Where(ranch => ranch.OwnerFirstName.Contains(ownerFirstName));
+            }
+
+            if (!string.IsNullOrEmpty(ownerLastName))
+            {
+                query = query.Where(ranch => ranch.OwnerlastName.Contains(ownerLastName));
+            }
+
+            return query.ToList();
+        }
+
     }
 }

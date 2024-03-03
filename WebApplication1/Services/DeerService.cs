@@ -123,6 +123,53 @@ namespace ReviewPlatformAPI.Services
             };
         }
 
+        public bool UpdateDeerFamily(Guid deerId, DeerFamilyModel deerFamily)
+        {
+            try
+            {
+                Deer? deer = _deerRepo.GetById(deerId);
+
+                if (deer != null)
+                {
+                    LevelOneRelationship levelOne = deer.LevelOneRelationships.First();
+                    LevelTwoRelationship levelTwo = deer.LevelTwoRelationships.First();
+                    LevelThreeRelationship levelThree = deer.LevelThreeRelationships.First();
+
+                    // Update LevelOne relationships
+                    levelOne.Sire = !string.IsNullOrEmpty(deerFamily.LevelOneSire) ? deerFamily.LevelOneSire : levelOne.Sire;
+                    levelOne.Dam = !string.IsNullOrEmpty(deerFamily.LevelOneDam) ? deerFamily.LevelOneDam : levelOne.Dam;
+
+                    // Update LevelTwo relationships
+                    levelTwo.SireA = !string.IsNullOrEmpty(deerFamily.LevelTwoSireA) ? deerFamily.LevelTwoSireA : levelTwo.SireA;
+                    levelTwo.SireB = !string.IsNullOrEmpty(deerFamily.LevelTwoSireB) ? deerFamily.LevelTwoSireB : levelTwo.SireB;
+                    levelTwo.DamA = !string.IsNullOrEmpty(deerFamily.LevelTwoDamA) ? deerFamily.LevelTwoDamA : levelTwo.DamA;
+                    levelTwo.DamB = !string.IsNullOrEmpty(deerFamily.LevelTwoDamB) ? deerFamily.LevelTwoDamB : levelTwo.DamB;
+
+                    // Update LevelThree relationships
+                    levelThree.SireA = !string.IsNullOrEmpty(deerFamily.LevelThreeSireA) ? deerFamily.LevelThreeSireA : levelThree.SireA;
+                    levelThree.SireB = !string.IsNullOrEmpty(deerFamily.LevelThreeSireB) ? deerFamily.LevelThreeSireB : levelThree.SireB;
+                    levelThree.SireC = !string.IsNullOrEmpty(deerFamily.LevelThreeSireC) ? deerFamily.LevelThreeSireC : levelThree.SireC;
+                    levelThree.SireD = !string.IsNullOrEmpty(deerFamily.LevelThreeSireD) ? deerFamily.LevelThreeSireD : levelThree.SireD;
+                    levelThree.DamA = !string.IsNullOrEmpty(deerFamily.LevelThreeDamA) ? deerFamily.LevelThreeDamA : levelThree.DamA;
+                    levelThree.DamB = !string.IsNullOrEmpty(deerFamily.LevelThreeDamB) ? deerFamily.LevelThreeDamB : levelThree.DamB;
+                    levelThree.DamC = !string.IsNullOrEmpty(deerFamily.LevelThreeDamC) ? deerFamily.LevelThreeDamC : levelThree.DamC;
+                    levelThree.DamD = !string.IsNullOrEmpty(deerFamily.LevelThreeDamD) ? deerFamily.LevelThreeDamD : levelThree.DamD;
+
+                    _deerRepo.Update(deer);
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception();
+            }
+        }
+
+
         private ICollection<MediaModel> MapMedia(ICollection<Media> media)
         {
             List<MediaModel> mediaModels = new List<MediaModel>();
@@ -196,11 +243,11 @@ namespace ReviewPlatformAPI.Services
             return modelList;
         }
 
-        public List<DeerModel> GetAllFiltered(bool isApproved, string? deerName, string? ranchName, string? codon, decimal? gebv, int? age, int? sciScore, int? page)
+        public List<DeerModel> GetAllFiltered(bool isApproved, string? deerName, string? ranchName, string? codon, decimal? gebv, int? age, int? sciScore, int? page, string? ranchId)
         {
             List<Deer> entityList = new List<Deer>();
             List<DeerModel> modelList = new List<DeerModel>();
-
+            
             if (deerName == null)
             {
                 deerName = "";
@@ -216,7 +263,12 @@ namespace ReviewPlatformAPI.Services
                 codon = "";
             }
 
-            entityList = _deerRepo.GetAllFiltered(isApproved, deerName, ranchName, codon, gebv, age, sciScore, page);
+            if (ranchId == null)
+            {
+                ranchId = "";
+            }
+
+            entityList = _deerRepo.GetAllFiltered(isApproved, deerName, ranchName, codon, gebv, age, sciScore, page, ranchId);
 
             foreach (Deer deer in entityList)
             {

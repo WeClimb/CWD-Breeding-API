@@ -75,9 +75,19 @@ namespace ReviewPlatformAPI.Repos
             return _reviewPlatformDBContext.Media.Where(media => media.DeerId == deerId).ToList();
         }
 
-        public List<Deer> GetAllFiltered(bool isApproved,string? deerName, string? ranchName, string? codon, decimal? gebv,int? age,int? sciScore, int? page)
+        public List<Deer> GetAllFiltered(bool isApproved,string? deerName, string? ranchName, string? codon, decimal? gebv,int? age,int? sciScore, int? page, string? ranchId)
         {
             int pageSize = 10; // Set the page size to 20 for example purposes, can be changed to any value;
+
+            if (!string.IsNullOrEmpty(ranchId))
+            {
+               return LoadDbSet().Where(deer => deer.RanchId.ToString() == ranchId)
+                            .Include(deer => deer.Ranch)
+                            .Include(deer => deer.LevelOneRelationships)
+                            .Include(deer => deer.LevelTwoRelationships)
+                            .Include(deer => deer.LevelThreeRelationships)
+                            .ToList();
+            }
 
             IQueryable<Deer> query = LoadDbSet().Where(deer => deer.IsApproved == isApproved)
                                           .Where(deer => deer.IsPaid == true)
@@ -100,7 +110,12 @@ namespace ReviewPlatformAPI.Repos
                 query = query.Where(deer => deer.SciScore >= sciScore);
             }
 
-            if (page != null)
+            if (ranchId != null || ranchId != "")
+            {
+                query = query.Where(deer => deer.RanchId.ToString().Contains(ranchId));
+            }
+
+            if (page != null && string.IsNullOrEmpty(ranchId))
             {
                 query = query.Skip(pageSize * ((int)page - 1)).Take(pageSize);
             }
