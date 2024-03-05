@@ -81,7 +81,8 @@ namespace ReviewPlatformAPI.Repos
 
             if (!string.IsNullOrEmpty(ranchId))
             {
-               return LoadDbSet().Where(deer => deer.RanchId.ToString() == ranchId)
+               return LoadDbSet()
+                            .Where(deer => deer.RanchId.ToString() == ranchId)
                             .Include(deer => deer.Ranch)
                             .Include(deer => deer.LevelOneRelationships)
                             .Include(deer => deer.LevelTwoRelationships)

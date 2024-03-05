@@ -76,8 +76,15 @@ namespace ReviewPlatformAPI.Controllers
             }
         }
 
+
         [HttpPut("{id:Guid}")]
-        [HttpPut("{deerId}/Pedigree")]
+        public IActionResult UpdateDeer(Guid id, DeerModel model)
+        {
+            return Update(id, model);
+        }
+
+        [HttpPut]
+        [Route("{deerId}/Pedigree")]
         public IActionResult UpdatePedigree(Guid deerId, [FromBody] DeerFamilyModel deerFamily)
         {
             bool request = _deerService.UpdateDeerFamily(deerId, deerFamily);

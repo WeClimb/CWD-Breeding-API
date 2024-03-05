@@ -89,6 +89,16 @@ namespace ReviewPlatformAPI.Services
             entity.AgeOfBuckDisplayed = model.AgeOfBuckDisplayed;
             entity.Description = model.Description;
             entity.IsPaid = model.IsPaid;
+            
+            if(model.Status.ToLower() == "denied")
+            {
+                entity.Status = model.Status.ToUpper();
+            }
+
+            if(model.Status.ToLower() != "denied")
+            {
+                entity.Status = "ACTIVE";
+            }
 
             if(entity.PaidDate != null)
             {
@@ -120,6 +130,7 @@ namespace ReviewPlatformAPI.Services
                 Description = entity.Description,
                 IsPaid = entity.IsPaid,
                 PaidDate = entity.PaidDate,
+                Status = entity.Status,
             };
         }
 
@@ -303,6 +314,7 @@ namespace ReviewPlatformAPI.Services
         {
             Ranch? ranch = _deerRepo.GetRanch(deer.RanchId);
             deer.Status = "ACTIVE";
+            deer.DenialReason = null;
             Update(deer.Id, deer);
 
             string loginLink = _configuration["CurrentHost"] + "login";
