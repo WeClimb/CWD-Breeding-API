@@ -39,8 +39,7 @@ namespace ReviewPlatformAPI
                 entity.HasOne(d => d.Ranch)
                     .WithMany(p => p.ChangePasswords)
                     .HasForeignKey(d => d.RanchId)
-                    .HasConstraintName("FK_ChangePasswords_Ranch");
-
+                    .HasConstraintName("FK_ChangePasswords_Ranch"); 
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.ChangePasswords)
                     .HasForeignKey(d => d.UserId)

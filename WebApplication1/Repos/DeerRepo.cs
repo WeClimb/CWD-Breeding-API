@@ -175,5 +175,82 @@ namespace ReviewPlatformAPI.Repos
         {
             return _reviewPlatformDBContext.Deer;
         }
+
+        public bool SwapProfileImage(Guid deerId, string profileImageUrl, string imageUrl)
+        {
+            Deer? deer = LoadDbSet().Where(deer => deer.Id == deerId && deer.ProfileImage.ToLower() == profileImageUrl.ToLower())
+                                    .Include(deer => deer.Media)
+                                    .FirstOrDefault();
+
+            if(deer != null)
+            {
+                deer.ProfileImage = imageUrl;
+
+                var media = deer.Media.Where(media => media.BlobId.ToLower() == imageUrl.ToLower()).FirstOrDefault();
+                if(media != null)
+                {
+                    media.BlobId = profileImageUrl;
+
+                    return _reviewPlatformDBContext.SaveChanges() > 0;
+                }
+                else
+                {
+                    return false;
+                }
+            } 
+            else
+            {
+                return false;
+            }
+        }
+
+        public bool UpdateImageAge(Guid deerId, string url, int newAge, bool isProfileImage)
+        {
+            if (isProfileImage)
+            {
+                Deer? deer = LoadDbSet().Where(deer => deer.Id == deerId).FirstOrDefault();
+
+                if (deer != null)
+                {
+                    deer.AgeOfBuckDisplayed = newAge;
+                }
+                                                        
+            }
+            else
+            {
+                Media? media = _reviewPlatformDBContext.Media.Where(media => media.BlobId == url && media.DeerId == deerId).FirstOrDefault();
+                if(media != null)
+                {
+                    media.AgeOfBuckDisplayed = newAge;
+                }
+            }
+
+            return _reviewPlatformDBContext.SaveChanges() > 0;
+
+        }
+
+        public bool RemoveImage(Guid deerId, string imageUrl)
+        {
+            Deer? deer = LoadDbSet().Where(deer => deer.Id == deerId)
+                       .Include(deer => deer.Media)
+                       .FirstOrDefault();
+
+            if(deer != null)
+            {
+                Media? media = _reviewPlatformDBContext.Media.Where(media => media.BlobId == imageUrl && media.DeerId == deerId).FirstOrDefault();
+
+                if(media != null)
+                {
+                    _reviewPlatformDBContext.Remove(media);
+                    _reviewPlatformDBContext.SaveChanges();
+                    return true;
+                }
+
+                return false;
+            }
+
+            return false;
+        }
+
     }
 }

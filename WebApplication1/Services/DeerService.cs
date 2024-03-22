@@ -180,6 +180,20 @@ namespace ReviewPlatformAPI.Services
             }
         }
 
+        public bool UpdateImageAge(Guid deerId, string url,int newAge, bool isProfileImage)
+        {
+            return _deerRepo.UpdateImageAge(deerId, url, newAge, isProfileImage);
+        }
+
+        public bool RemoveImage(Guid deerId, string imageUrl)
+        {
+            return _deerRepo.RemoveImage(deerId, imageUrl);
+        }
+
+        public bool SwapProfileImage(Guid deerId, string profileImageUrl, string imageUrl)
+        {
+            return _deerRepo.SwapProfileImage(deerId, profileImageUrl, imageUrl);
+        }
 
         private ICollection<MediaModel> MapMedia(ICollection<Media> media)
         {

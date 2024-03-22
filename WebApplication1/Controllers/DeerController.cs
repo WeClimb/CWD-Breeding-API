@@ -202,6 +202,58 @@ namespace ReviewPlatformAPI.Controllers
             }
         }
 
+        [HttpPost("remove-image")]
+        public IActionResult RemoveImage(Guid deerId, string imageUrl)
+        {
+            try
+            {
+                if (_deerService.RemoveImage(deerId, imageUrl))
+                {
+                    return Ok();
+                }
+                else
+                {
+                    return BadRequest("Image did not save");
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost]
+        [Route("swap-profile-image")]
+        public IActionResult SwapProfileImage(Guid deerId,string profileImageUrl, string imageUrl)
+        {
+            try
+            {
+                bool successful = _deerService.SwapProfileImage(deerId, profileImageUrl, imageUrl);
+                return Ok(successful);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost]
+        [Route("update-image-age")]
+        public IActionResult UpdateImageAge(Guid deerId, string url, int newAge , bool isProfileImage)
+        {
+            try
+            {
+                bool successful = _deerService.UpdateImageAge(deerId, url, newAge, isProfileImage);
+                return Ok(successful);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+
+
         //[HttpPost("Create-Subscriptions")]
         //public async Task<IActionResult> CreateSubscriptions([FromBody] List<DeerSubsciptionModel> requests)
         //{
