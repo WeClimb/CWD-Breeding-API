@@ -74,59 +74,62 @@ namespace ReviewPlatformAPI.Repos
         {
             return _reviewPlatformDBContext.Media.Where(media => media.DeerId == deerId).ToList();
         }
-
-        public List<Deer> GetAllFiltered(bool isApproved,string? deerName, string? ranchName, string? codon, decimal? gebv,int? age,int? sciScore, int? page, string? ranchId)
+        public List<Deer> GetAllFiltered(bool isApproved, string? deerName, string? ranchName, string? codon, decimal? gebv, int? age, int? sciScore, int? page, string? ranchId)
         {
-            int pageSize = 10; // Set the page size to 20 for example purposes, can be changed to any value;
+            int pageSize = 10; // Set the page size to 10, can be changed to any value
 
             if (!string.IsNullOrEmpty(ranchId))
             {
-               return LoadDbSet()
-                            .Where(deer => deer.RanchId.ToString() == ranchId)
-                            .Include(deer => deer.Ranch)
-                            .Include(deer => deer.LevelOneRelationships)
-                            .Include(deer => deer.LevelTwoRelationships)
-                            .Include(deer => deer.LevelThreeRelationships)
-                            .ToList();
-            }
-
-            IQueryable<Deer> query = LoadDbSet().Where(deer => deer.IsApproved == isApproved)
-                                          .Where(deer => deer.IsPaid == true)
-                                          .Where(deer => deer.Name.Contains(deerName))
-                                          .Where(deer => deer.Ranch.Name.Contains(ranchName))
-                                          .Where(deer => deer.Codon.Contains(codon))
-                                          .Where(deer => deer.Status.ToLower() != "denied");
-
-            if (gebv != null) {
-                query = query.Where(deer => deer.Gebu <= gebv);
-            }
-
-            if(age != null)
-            {
-                query = query.Where(deer => deer.Age.ToString().Contains(age.ToString()));
-            }
-
-            if(sciScore != null)
-            {
-                query = query.Where(deer => deer.SciScore >= sciScore);
-            }
-
-            if (ranchId != null || ranchId != "")
-            {
-                query = query.Where(deer => deer.RanchId.ToString().Contains(ranchId));
-            }
-
-            if (page != null && string.IsNullOrEmpty(ranchId))
-            {
-                query = query.Skip(pageSize * ((int)page - 1)).Take(pageSize);
-            }
-
-            return query.Include(deer => deer.Ranch)
+                return LoadDbSet()
+                        .Where(deer => deer.RanchId.ToString() == ranchId)
+                        .Include(deer => deer.Ranch)
                         .Include(deer => deer.LevelOneRelationships)
                         .Include(deer => deer.LevelTwoRelationships)
                         .Include(deer => deer.LevelThreeRelationships)
                         .ToList();
+            }
+
+            IQueryable<Deer> query = LoadDbSet().Where(deer => deer.IsApproved == isApproved)
+                                          .Where(deer => deer.IsPaid == true)
+                                          .Where(deer => string.IsNullOrEmpty(deerName) || deer.Name.Contains(deerName))
+                                          .Where(deer => string.IsNullOrEmpty(ranchName) || deer.Ranch.Name.Contains(ranchName))
+                                          .Where(deer => string.IsNullOrEmpty(codon) || deer.Codon.Contains(codon))
+                                          .Where(deer => deer.Status.ToLower() != "denied");
+
+            if (gebv != null)
+            {
+                query = query.Where(deer => deer.Gebu <= gebv);
+            }
+
+            if (age != null)
+            {
+                query = query.Where(deer => deer.Age == age);
+            }
+
+            if (sciScore != null)
+            {
+                query = query.Where(deer => deer.SciScore >= sciScore);
+            }
+
+            if (!string.IsNullOrEmpty(ranchId))
+            {
+                query = query.Where(deer => deer.RanchId.ToString().Contains(ranchId));
+            }
+
+            if (page != null && page > 0)
+            {
+                query = query.Skip(pageSize * ((int)page - 1)).Take(pageSize);
+            }
+
+            var result = query.Include(deer => deer.Ranch)
+                              .Include(deer => deer.LevelOneRelationships)
+                              .Include(deer => deer.LevelTwoRelationships)
+                              .Include(deer => deer.LevelThreeRelationships)
+                              .ToList();
+
+            return result;
         }
+
 
         public void SaveImageToDeer(Guid deerId, string imageUrl, int? age)
         {

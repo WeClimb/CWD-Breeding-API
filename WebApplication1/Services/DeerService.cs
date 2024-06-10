@@ -25,6 +25,7 @@ namespace ReviewPlatformAPI.Services
             _configuration = configuration;
             _emailService = emailService;
         }
+
         public override Deer ConverToEntityForAdd(DeerModel model)
         {
             return new Deer
@@ -39,6 +40,9 @@ namespace ReviewPlatformAPI.Services
                 IsApproved = false,
                 SemenAvailable = model.SemenAvailable,
                 SemenCost = model.SemenCost,
+                EmbryosAvailable = model.EmbryosAvailable, // New property
+                EmbryosCost = model.EmbryosCost, // New property
+                Gender = model.Gender, // New property
                 RanchId = model.RanchId,
                 CreateDate = DateTime.Now,
                 UpdateDate = DateTime.Now,
@@ -74,8 +78,11 @@ namespace ReviewPlatformAPI.Services
             entity.UpdateDate = DateTime.Now;
             entity.Age = CalculateAgeFromDOB(model.Dob);
             entity.SemenCost = model.SemenCost;
+            entity.EmbryosCost = model.EmbryosCost; // New property
             entity.IsApproved = model.IsApproved;
             entity.SemenAvailable = model.SemenAvailable;
+            entity.EmbryosAvailable = model.EmbryosAvailable; // New property
+            entity.Gender = model.Gender; // New property
             entity.RanchId = model.RanchId;
             entity.Nadr = model.Nadr;
             entity.Codon = model.Codon;
@@ -89,22 +96,23 @@ namespace ReviewPlatformAPI.Services
             entity.AgeOfBuckDisplayed = model.AgeOfBuckDisplayed;
             entity.Description = model.Description;
             entity.IsPaid = model.IsPaid;
-            
-            if(model.Status.ToLower() == "denied")
+
+            if (model.Status.ToLower() == "denied")
             {
                 entity.Status = model.Status.ToUpper();
             }
 
-            if(model.Status.ToLower() != "denied")
+            if (model.Status.ToLower() != "denied")
             {
                 entity.Status = "ACTIVE";
             }
 
-            if(entity.PaidDate != null)
+            if (entity.PaidDate != null)
             {
                 entity.PaidDate = model.PaidDate;
             }
         }
+
 
         public override DeerModel CreateModelForIndividualLookup(Deer entity)
         {
@@ -121,6 +129,9 @@ namespace ReviewPlatformAPI.Services
                 IsApproved = entity.IsApproved,
                 SemenAvailable = entity.SemenAvailable,
                 SemenCost = entity.SemenCost,
+                EmbryosAvailable = entity.EmbryosAvailable, // New property
+                EmbryosCost = entity.EmbryosCost, // New property
+                Gender = entity.Gender, // New property
                 RanchId = entity.RanchId,
                 Ranch = _ranchService.CreateModelForIndividualLookup(entity.Ranch),
                 VideoLink = entity.VideoLink,

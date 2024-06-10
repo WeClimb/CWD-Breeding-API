@@ -7,8 +7,6 @@ namespace ReviewPlatformAPI.Models
 {
     public partial class DeerModel : BaseModel
     {
-
-
         public string Name { get; set; } = null!;
         public string Nadr { get; set; } = null!;
         public DateTime Dob { get; set; }
@@ -19,18 +17,18 @@ namespace ReviewPlatformAPI.Models
         public string Codon { get; set; }
         public decimal? SciScore { get; set; }
         public bool IsApproved { get; set; }
-        public bool IsPaid { get; set; } = false; 
+        public bool IsPaid { get; set; } = false;
         public DateTime? PaidDate { get; set; }
         public bool SemenAvailable { get; set; }
         public string? SemenCost { get; set; }
+        public bool EmbryosAvailable { get; set; } // New property
+        public string? EmbryosCost { get; set; } // New property
+        public string Gender { get; set; } = null!; // New property
         public Guid RanchId { get; set; }
         public string? ProfileImage { get; set; } = string.Empty;
         public string? VideoLink { get; set; }
         public string? DenialReason { get; set; }
-        public virtual DeerFamilyModel? deerFamily { get; set;}
+        public virtual DeerFamilyModel? deerFamily { get; set; }
         public virtual RanchModel? Ranch { get; set; } = null!;
-
-
-
     }
 }

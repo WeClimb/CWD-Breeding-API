@@ -27,6 +27,9 @@ namespace ReviewPlatformAPI.Entities
         public DateTime? PaidDate { get; set; }
         public bool SemenAvailable { get; set; }
         public string? SemenCost { get; set; }
+        public bool EmbryosAvailable { get; set; } // New property
+        public string? EmbryosCost { get; set; } // New property
+        public string Gender { get; set; } = null!; // New property
         public Guid RanchId { get; set; }
         public string? ProfileImage { get; set; }
         public string? VideoLink { get; set; }
