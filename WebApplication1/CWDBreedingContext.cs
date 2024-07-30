@@ -61,9 +61,9 @@ namespace ReviewPlatformAPI
                     .HasColumnType("datetime")
                     .HasColumnName("DOB");
 
-                entity.Property(e => e.Gebu)
+                entity.Property(e => e.GEBV)
                     .HasColumnType("decimal(18, 0)")
-                    .HasColumnName("GEBU");
+                    .HasColumnName("GEBV");
 
                 entity.Property(e => e.Nadr)
                     .HasMaxLength(50)

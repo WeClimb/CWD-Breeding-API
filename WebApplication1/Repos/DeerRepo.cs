@@ -98,7 +98,7 @@ namespace ReviewPlatformAPI.Repos
 
             if (gebv != null)
             {
-                query = query.Where(deer => deer.Gebu <= gebv);
+                query = query.Where(deer => deer.GEBV <= gebv);
             }
 
             if (age != null)

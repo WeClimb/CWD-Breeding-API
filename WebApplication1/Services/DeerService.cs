@@ -34,7 +34,7 @@ namespace ReviewPlatformAPI.Services
                 Nadr = model.Nadr,
                 Dob = model.Dob,
                 Age = CalculateAgeFromDOB(model.Dob),
-                Gebu = model.Gebu,
+                GEBV = model.GEBV,
                 Codon = model.Codon,
                 SciScore = model.SciScore,
                 IsApproved = false,
@@ -89,7 +89,7 @@ namespace ReviewPlatformAPI.Services
             entity.Name = model.Name;
             entity.Dob = model.Dob;
             entity.SciScore = model.SciScore;
-            entity.Gebu = model.Gebu;
+            entity.GEBV = model.GEBV;
             entity.ProfileImage = model.ProfileImage;
             entity.DenialReason = model.DenialReason;
             entity.VideoLink = model.VideoLink;
@@ -123,7 +123,7 @@ namespace ReviewPlatformAPI.Services
                 Nadr = entity.Nadr,
                 Dob = entity.Dob,
                 Age = entity.Age,
-                Gebu = entity.Gebu,
+                GEBV = entity.GEBV,
                 Codon = entity.Codon,
                 SciScore = entity.SciScore,
                 IsApproved = entity.IsApproved,

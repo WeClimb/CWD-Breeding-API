@@ -13,7 +13,7 @@ namespace ReviewPlatformAPI.Models
         public decimal? Age { get; set; }
         public decimal? AgeOfBuckDisplayed { get; set; }
         public string Description { get; set; } = "";
-        public decimal Gebu { get; set; }
+        public decimal GEBV { get; set; }
         public string Codon { get; set; }
         public decimal? SciScore { get; set; }
         public bool IsApproved { get; set; }
