@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "X:\\CWD-Breeding-API\\WebApplication1\\CWDBreedingAPI.csproj": {}
+    "X:\\cwd-breeding\\CWD-Breeding-API\\WebApplication1\\CWDBreedingAPI.csproj": {}
   },
   "projects": {
-    "X:\\CWD-Breeding-API\\WebApplication1\\CWDBreedingAPI.csproj": {
+    "X:\\cwd-breeding\\CWD-Breeding-API\\WebApplication1\\CWDBreedingAPI.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "X:\\CWD-Breeding-API\\WebApplication1\\CWDBreedingAPI.csproj",
+        "projectUniqueName": "X:\\cwd-breeding\\CWD-Breeding-API\\WebApplication1\\CWDBreedingAPI.csproj",
         "projectName": "CWDBreedingAPI",
-        "projectPath": "X:\\CWD-Breeding-API\\WebApplication1\\CWDBreedingAPI.csproj",
+        "projectPath": "X:\\cwd-breeding\\CWD-Breeding-API\\WebApplication1\\CWDBreedingAPI.csproj",
         "packagesPath": "C:\\Users\\WeCli\\.nuget\\packages\\",
-        "outputPath": "X:\\CWD-Breeding-API\\WebApplication1\\obj\\",
+        "outputPath": "X:\\cwd-breeding\\CWD-Breeding-API\\WebApplication1\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\WeCli\\AppData\\Roaming\\NuGet\\NuGet.Config",

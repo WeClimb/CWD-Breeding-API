@@ -210,11 +210,6 @@ namespace ReviewPlatformAPI.Services
                 return false;
             }
 
-            if (string.IsNullOrWhiteSpace(ranch.Website))
-            {
-                return false;
-            }
-
             if (string.IsNullOrWhiteSpace(ranch.Email))
             {
                 return false;
