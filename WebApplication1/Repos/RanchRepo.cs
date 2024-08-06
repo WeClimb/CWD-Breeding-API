@@ -43,7 +43,8 @@ namespace ReviewPlatformAPI.Repos
 
         public Ranch GetRanchByEmail(string email)
         {
-            return _reviewPlatformDBContext.Ranches.FirstOrDefault(client => client.Email == email) ?? throw new Exception("TODO: ERROR");
+            Ranch x = _reviewPlatformDBContext.Ranches.FirstOrDefault(client => client.Email == email); ;
+            return x;
         }
 
         public List<Ranch> GetRanchesByName(string? name, string? ownerFirstName, string? ownerLastName)

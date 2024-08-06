@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <NameOfLastUsedPublishProfile>X:\CWD-Breeding-API\WebApplication1\Properties\PublishProfiles\cwdBreedingAPIQA - Web Deploy.pubxml</NameOfLastUsedPublishProfile>
+    <NameOfLastUsedPublishProfile>X:\cwd-breeding\CWD-Breeding-API\WebApplication1\Properties\PublishProfiles\cwdBreedingAPIQA - Web Deploy.pubxml</NameOfLastUsedPublishProfile>
   </PropertyGroup>
 </Project>
