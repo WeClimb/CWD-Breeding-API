@@ -25,6 +25,8 @@ namespace ReviewPlatformAPI.Services
             return SendViaSendGrid(to, subject, body, ccs);
         }
 
+
+
         private bool SendViaSendGrid(string to, string subject, string body, List<string>? ccs)
         {
             var apiKey = _configuration["SendGridMailSettings:ApiKey"];
@@ -51,20 +53,28 @@ namespace ReviewPlatformAPI.Services
                 Subject = subject,
                 HtmlContent = htmlContent,
                 Personalizations = new List<Personalization>()
-                {
-                    new Personalization()
-                    {
-                        Tos = new List<EmailAddress>()  {sendGridTo }
-                    }
-                }
+        {
+            new Personalization()
+            {
+                Tos = new List<EmailAddress>()  { sendGridTo }
+            }
+        }
             };
 
-            if (sendGridCC.Any())
-            {
-                msg.Personalizations[0].Ccs = sendGridCC;
-            }
+            // Block the async method to execute synchronously
+            var response = client.SendEmailAsync(msg).GetAwaiter().GetResult();
 
-            var response = client.SendEmailAsync(msg).Result;
+            // Inspect the response
+            if (response.IsSuccessStatusCode)
+            {
+                Console.WriteLine("Email sent successfully.");
+            }
+            else
+            {
+                Console.WriteLine("Failed to send email.");
+                var responseBody = response.Body.ReadAsStringAsync().GetAwaiter().GetResult(); // Get the response body
+                Console.WriteLine(responseBody);
+            }
 
             return response.IsSuccessStatusCode;
         }

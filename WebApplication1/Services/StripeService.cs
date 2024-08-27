@@ -126,6 +126,107 @@ namespace ReviewPlatformAPI.Services
             }
         }
 
+        //Create-Checkout-Session
+        public StripeSessionModel CreateAdminSubCheckoutSession(List<DeerSubsciptionModel> deerToPayFor)
+        {
+            if (deerToPayFor[0].RanchId != null && deerToPayFor[0].RanchId != null)
+            {
+                try
+                {
+                    StripeConfiguration.ApiKey = _configuration["StripeAPIKey"];
+
+                    Guid ranchId = Guid.Parse(deerToPayFor[0].RanchId);
+
+                    Ranch ranch = _ranchRepo.GetByNoTrackingId(ranchId);
+
+                    var domain = _configuration["CurrentHost"];
+
+                    List<SessionLineItemOptions> lineItems = new List<SessionLineItemOptions>();
+
+                    foreach (DeerSubsciptionModel deer in deerToPayFor)
+                    {
+                        //Get promo code based off of code id in deer
+                        PromoCode? promoCode = _promoCodeRepository.GetPromoCode(deer.PromoCodeId);
+
+                        SessionLineItemOptions lineItem = new SessionLineItemOptions();
+                        lineItem.Quantity = 1;
+
+                        Dictionary<string, string> metaData = new Dictionary<string, string>();
+                        metaData.Add("DeerId", deer.DeerId);
+                        metaData.Add("RanchId", deer.RanchId);
+                        if (promoCode != null)
+                        {
+                            metaData.Add("PromoCode", promoCode?.Code ?? "");
+                        }
+
+                        ProductCreateOptions productOptions = new ProductCreateOptions
+                        {
+                            Name = deer.DeerName,
+                            Metadata = metaData,
+                        };
+
+                        productOptions.DefaultPriceData = new ProductDefaultPriceDataOptions();
+
+                        productOptions.DefaultPriceData.Currency = "usd";
+
+                        long price = long.Parse(_configuration["DeerCost"]);
+
+                        if (promoCode != null)
+                        {
+                            decimal discountAmount = price * (promoCode.PercentageOff / 100);
+                            decimal discountedPrice = price - discountAmount;
+                            price = (long)discountedPrice;
+                        }
+
+                        productOptions.DefaultPriceData.UnitAmountDecimal = price * 100;
+
+                        productOptions.DefaultPriceData.Recurring = new ProductDefaultPriceDataRecurringOptions();
+                        productOptions.DefaultPriceData.Recurring.Interval = "year";
+
+                        var productOptionsService = new ProductService();
+                        Product x = productOptionsService.Create(productOptions);
+
+                        lineItem.Price = x.DefaultPriceId;
+
+                        lineItems.Add(lineItem);
+
+                    }
+
+                    //Create Stripe Session that takes in list of deer to pay for as one subscription
+                    var options = new SessionCreateOptions
+                    {
+                        LineItems = new List<SessionLineItemOptions>
+                        {
+                        },
+                        Mode = "subscription",
+                        SuccessUrl = domain + "/admin-home",
+                        CancelUrl = domain + "/cancel.html",
+                    };
+
+                    options.LineItems = lineItems;
+                    options.CustomerEmail = ranch.Email;
+
+                    var service = new SessionService();
+                    Session session = service.Create(options);
+
+                    StripeSessionModel stripeSession = new StripeSessionModel();
+                    stripeSession.StripeURl = session.Url;
+
+                    return stripeSession;
+                }
+                catch
+                {
+                    throw new Exception("Payment Failed");
+                }
+
+            }
+            else
+            {
+                throw new Exception("Empty Data Set");
+            }
+        }
+
+
         public object? InvoicePaymentFailedHandler(Event stripeEvent)
         {
             //Mark Deer as unpaid at end of current subscription, alert user

@@ -78,23 +78,27 @@ namespace ReviewPlatformAPI.Repos
         {
             int pageSize = 10; // Set the page size to 10, can be changed to any value
 
-            if (!string.IsNullOrEmpty(ranchId))
-            {
-                return LoadDbSet()
-                        .Where(deer => deer.RanchId.ToString() == ranchId)
-                        .Include(deer => deer.Ranch)
-                        .Include(deer => deer.LevelOneRelationships)
-                        .Include(deer => deer.LevelTwoRelationships)
-                        .Include(deer => deer.LevelThreeRelationships)
-                        .ToList();
-            }
+              if (!string.IsNullOrEmpty(ranchId))
+                {
+                    return LoadDbSet()
+                            .Where(deer => deer.RanchId.ToString() == ranchId)
+                            .Include(deer => deer.Ranch)
+                            .Include(deer => deer.LevelOneRelationships)
+                            .Include(deer => deer.LevelTwoRelationships)
+                            .Include(deer => deer.LevelThreeRelationships)
+                             .Where(deer => deer.Status.ToLower() != "deleted")
+                            .ToList();
+                }
 
-            IQueryable<Deer> query = LoadDbSet().Where(deer => deer.IsApproved == isApproved)
+            IQueryable<Deer> query = LoadDbSet()
+                                          .Where(deer => deer.IsApproved == isApproved)
                                           .Where(deer => deer.IsPaid == true)
                                           .Where(deer => string.IsNullOrEmpty(deerName) || deer.Name.Contains(deerName))
                                           .Where(deer => string.IsNullOrEmpty(ranchName) || deer.Ranch.Name.Contains(ranchName))
                                           .Where(deer => string.IsNullOrEmpty(codon) || deer.Codon.Contains(codon))
-                                          .Where(deer => deer.Status.ToLower() != "denied");
+                                          .Where(deer => deer.Status.ToLower() != "denied")
+                                          .Where(deer => deer.Status.ToLower() != "deleted");
+
 
             if (gebv != null)
             {
@@ -166,7 +170,7 @@ namespace ReviewPlatformAPI.Repos
         public List<Deer> GetAll(bool isPending, bool isPaid)
         {
             return LoadDbSet().Where(deer => deer.IsApproved == isPending && deer.IsPaid == isPaid)
-                              .Where(deer => deer.Status.ToLower() != "denied")
+                              .Where(deer => deer.Status.ToLower() != "denied" || deer.Status.ToLower() != "deleted")
                               .Include(deer => deer.LevelOneRelationships)
                               .Include(deer => deer.LevelTwoRelationships)
                               .Include(deer => deer.LevelThreeRelationships)

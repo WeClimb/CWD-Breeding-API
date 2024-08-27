@@ -64,6 +64,20 @@ namespace ReviewPlatformAPI.Controllers
             }
         }
 
+        [HttpPost]
+        [Route("admin-create-checkout-session")]
+        public ActionResult AdminCreate(List<DeerSubsciptionModel> deerToPayFor)
+        {
+            try
+            {
+                return Ok(_stripeService.CreateAdminSubCheckoutSession(deerToPayFor));
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
         [AllowAnonymous]
         [HttpPost]
         [Route("webhook")]

@@ -97,12 +97,12 @@ namespace ReviewPlatformAPI.Services
             entity.Description = model.Description;
             entity.IsPaid = model.IsPaid;
 
-            if (model.Status.ToLower() == "denied")
+            if (model.Status.ToLower() == "denied" || model.Status.ToLower() == "deleted")
             {
                 entity.Status = model.Status.ToUpper();
             }
 
-            if (model.Status.ToLower() != "denied")
+            if (model.Status.ToLower() != "denied" && model.Status.ToLower() != "deleted")
             {
                 entity.Status = "ACTIVE";
             }
